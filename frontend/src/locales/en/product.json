@@ -1,0 +1,59 @@
+{
+  "nav": {
+    "catalog": "Product Catalog",
+    "home": "Home",
+    "admin": "Admin",
+    "langZhTW": "繁體中文",
+    "langEn": "English"
+  },
+  "catalog": {
+    "title": "Product Catalog",
+    "filterByTag": "Filter by Tag",
+    "allProducts": "All Products",
+    "noProducts": "No products found",
+    "composition": "Composition",
+    "viewDetail": "View Details"
+  },
+  "product": {
+    "name": "Product Name",
+    "description": "Description",
+    "composition": "Composition",
+    "yarnCount": "Yarn Count (D)",
+    "density": "Thread Density",
+    "weightGsm": "Weight (gsm)",
+    "width": "Width",
+    "weaveStructure": "Weave Structure",
+    "tags": "Tags",
+    "images": "Images",
+    "noImage": "No image available"
+  },
+  "admin": {
+    "productList": "Product List",
+    "addProduct": "Add Product",
+    "editProduct": "Edit Product",
+    "published": "Published",
+    "draft": "Draft",
+    "publish": "Publish",
+    "unpublish": "Unpublish",
+    "delete": "Delete",
+    "confirmDelete": "Are you sure you want to delete this product?",
+    "save": "Save",
+    "cancel": "Cancel",
+    "lastUpdated": "Last Updated",
+    "tabZhTW": "繁體中文",
+    "tabEn": "English",
+    "uploadImage": "Upload Image",
+    "maxImages": "Up to 6 images",
+    "dragToReorder": "Drag or use buttons to reorder",
+    "required": "Required",
+    "optional": "Optional",
+    "saveSuccess": "Saved successfully",
+    "saveError": "Save failed, please try again",
+    "deleteSuccess": "Deleted successfully",
+    "deleteError": "Delete failed, please try again",
+    "uploadError": "Image upload failed",
+    "fileTooLarge": "Image must be under 5MB",
+    "invalidFormat": "Only JPG or PNG formats are accepted",
+    "maxImagesReached": "Maximum 6 images per product"
+  }
+}

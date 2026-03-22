@@ -1,0 +1,59 @@
+{
+  "nav": {
+    "catalog": "產品型錄",
+    "home": "首頁",
+    "admin": "後台管理",
+    "langZhTW": "繁體中文",
+    "langEn": "English"
+  },
+  "catalog": {
+    "title": "產品型錄",
+    "filterByTag": "依標籤篩選",
+    "allProducts": "全部產品",
+    "noProducts": "目前沒有符合條件的產品",
+    "composition": "成份",
+    "viewDetail": "查看詳情"
+  },
+  "product": {
+    "name": "產品名稱",
+    "description": "描述",
+    "composition": "成份",
+    "yarnCount": "紗支數 (D)",
+    "density": "密度（經緯密）",
+    "weightGsm": "克重 (gsm)",
+    "width": "幅寬",
+    "weaveStructure": "組織結構",
+    "tags": "標籤",
+    "images": "圖片",
+    "noImage": "暫無圖片"
+  },
+  "admin": {
+    "productList": "產品列表",
+    "addProduct": "新增產品",
+    "editProduct": "編輯產品",
+    "published": "已發布",
+    "draft": "草稿",
+    "publish": "發布",
+    "unpublish": "取消發布",
+    "delete": "刪除",
+    "confirmDelete": "確定要刪除這個產品嗎？",
+    "save": "儲存",
+    "cancel": "取消",
+    "lastUpdated": "最後更新",
+    "tabZhTW": "繁體中文",
+    "tabEn": "English",
+    "uploadImage": "上傳圖片",
+    "maxImages": "最多 6 張圖片",
+    "dragToReorder": "拖曳或使用按鈕調整順序",
+    "required": "必填",
+    "optional": "選填",
+    "saveSuccess": "儲存成功",
+    "saveError": "儲存失敗，請稍後再試",
+    "deleteSuccess": "刪除成功",
+    "deleteError": "刪除失敗，請稍後再試",
+    "uploadError": "圖片上傳失敗",
+    "fileTooLarge": "圖片大小不得超過 5MB",
+    "invalidFormat": "僅接受 JPG 或 PNG 格式",
+    "maxImagesReached": "每個產品最多上傳 6 張圖片"
+  }
+}
