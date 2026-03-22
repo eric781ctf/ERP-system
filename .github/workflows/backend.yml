@@ -77,11 +77,49 @@ jobs:
           echo "image_uri=$IMAGE_URI:$GITHUB_SHA" >> $GITHUB_ENV
 
       # ── 6. Deploy to App Runner ──────────────────────────────────
+      - name: Wait for App Runner to be RUNNING before deploy
+        run: |
+          echo "Ensuring App Runner is RUNNING before deploying..."
+          for i in $(seq 1 30); do
+            STATUS=$(aws apprunner describe-service \
+              --service-arn ${{ secrets.APP_RUNNER_SERVICE_ARN }} \
+              --region ${{ env.AWS_REGION }} \
+              --query 'Service.Status' --output text)
+            echo "Status: $STATUS (attempt $i/30)"
+            if [ "$STATUS" = "RUNNING" ]; then
+              echo "✅ Ready to deploy"
+              break
+            elif [ "$STATUS" = "OPERATION_IN_PROGRESS" ]; then
+              sleep 20
+            else
+              echo "❌ Unexpected status: $STATUS"
+              exit 1
+            fi
+          done
+
       - name: Deploy to App Runner
         run: |
-          aws apprunner start-deployment \
+          IMAGE_URI=${{ secrets.ECR_REPOSITORY_URL }}:$GITHUB_SHA
+          aws apprunner update-service \
             --service-arn ${{ secrets.APP_RUNNER_SERVICE_ARN }} \
-            --region ${{ env.AWS_REGION }}
+            --region ${{ env.AWS_REGION }} \
+            --source-configuration "{
+              \"AuthenticationConfiguration\": {
+                \"AccessRoleArn\": \"arn:aws:iam::129263125308:role/AppRunnerECRAccessRole\"
+              },
+              \"AutoDeploymentsEnabled\": false,
+              \"ImageRepository\": {
+                \"ImageIdentifier\": \"$IMAGE_URI\",
+                \"ImageConfiguration\": {
+                  \"Port\": \"8080\",
+                  \"RuntimeEnvironmentVariables\": {
+                    \"APP_VERSION\": \"$GITHUB_SHA\",
+                    \"CORS_ALLOWED_ORIGINS\": \"https://d3n7k0ruchkryg.cloudfront.net\"
+                  }
+                },
+                \"ImageRepositoryType\": \"ECR\"
+              }
+            }"
 
       # ── 7. Wait for App Runner & health check ────────────────────
       - name: Wait for App Runner deployment
