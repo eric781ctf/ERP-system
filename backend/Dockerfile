@@ -28,9 +28,12 @@ COPY --from=builder /install /usr/local
 # Copy application source
 COPY . .
 
+# Give appuser ownership of the app directory (needed for gunicorn worker socket)
+RUN chown -R appuser:appuser /app
+
 # Switch to non-root user
 USER appuser
 
 EXPOSE 8080
 
-CMD ["gunicorn", "--bind", "0.0.0.0:8080", "app:create_app()"]
+CMD ["gunicorn", "--bind", "0.0.0.0:8080", "--worker-tmp-dir", "/dev/shm", "--workers", "2", "app:create_app()"]
