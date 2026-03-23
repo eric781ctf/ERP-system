@@ -4,15 +4,21 @@ import { useAuthStore } from "../stores/auth.js";
 export const routes = [
   {
     path: "/",
-    component: () => import("../views/public/HomeView.vue"),
-  },
-  {
-    path: "/products",
-    component: () => import("../views/public/ProductCatalogView.vue"),
-  },
-  {
-    path: "/products/:id",
-    component: () => import("../views/public/ProductDetailView.vue"),
+    component: () => import("../views/layout/PublicLayout.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("../views/public/HomeView.vue"),
+      },
+      {
+        path: "products",
+        component: () => import("../views/public/ProductCatalogView.vue"),
+      },
+      {
+        path: "products/:id",
+        component: () => import("../views/public/ProductDetailView.vue"),
+      },
+    ],
   },
   {
     path: "/login",
@@ -21,9 +27,15 @@ export const routes = [
   },
   {
     path: "/admin",
-    redirect: "/admin/products",
+    component: () => import("../views/layout/AdminLayout.vue"),
+    redirect: "/admin/dashboard",
     meta: { requiresAuth: true },
     children: [
+      {
+        path: "dashboard",
+        component: () => import("../views/admin/DashboardView.vue"),
+        meta: { requiresAuth: true },
+      },
       {
         path: "products",
         component: () => import("../views/admin/AdminProductListView.vue"),
@@ -63,7 +75,7 @@ router.beforeEach((to) => {
   }
 
   if (to.meta.requiresGuest && authStore.isLoggedIn) {
-    return { path: "/admin/products" };
+    return { path: "/admin/dashboard" };
   }
 });
 

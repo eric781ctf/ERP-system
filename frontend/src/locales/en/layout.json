@@ -1,0 +1,30 @@
+{
+  "layout": {
+    "nav": {
+      "home": "Home",
+      "catalog": "Product Catalog",
+      "products": "Products",
+      "contacts": "Contacts",
+      "staffLogin": "Staff Login"
+    },
+    "header": {
+      "logout": "Logout",
+      "toggleMenu": "Open menu",
+      "loggedInAs": "Logged in as"
+    },
+    "dashboard": {
+      "title": "Admin Dashboard",
+      "welcome": "Welcome back",
+      "products": {
+        "title": "Product Management",
+        "description": "Manage fabric products, images and publishing status",
+        "enter": "Go to Products"
+      },
+      "contacts": {
+        "title": "Contact Management",
+        "description": "Manage customer and supplier contact information",
+        "enter": "Go to Contacts"
+      }
+    }
+  }
+}

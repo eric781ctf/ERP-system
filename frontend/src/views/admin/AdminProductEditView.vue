@@ -4,6 +4,7 @@ import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useProductsStore } from "../../stores/products.js";
 import { useTagsStore } from "../../stores/tags.js";
+import { useToastStore } from "../../stores/toast.js";
 import AdminImageUpload from "../../components/AdminImageUpload.vue";
 
 const { t } = useI18n();
@@ -11,9 +12,11 @@ const route = useRoute();
 const router = useRouter();
 const productsStore = useProductsStore();
 const tagsStore = useTagsStore();
+const toastStore = useToastStore();
 
 const isEdit = computed(() => !!route.params.id);
 const activeTab = ref("zh-TW");
+const saving = ref(false);
 
 const form = reactive({
   name_zh: "",
@@ -30,7 +33,6 @@ const form = reactive({
 });
 
 const compositionError = ref(false);
-const saveError = ref(null);
 const updatedAt = ref(null);
 const tagInput = ref("");
 
@@ -82,7 +84,6 @@ function handleTagKeydown(e) {
 
 async function handleSubmit() {
   compositionError.value = false;
-  saveError.value = null;
 
   if (!form.composition.trim()) {
     compositionError.value = true;
@@ -103,160 +104,426 @@ async function handleSubmit() {
     tags: form.tags,
   };
 
+  saving.value = true;
   try {
     if (isEdit.value) {
       const updated = await productsStore.updateProduct(route.params.id, payload);
       updatedAt.value = updated.updated_at;
+      toastStore.add(t("admin.saveSuccess"), "success");
     } else {
       await productsStore.createProduct(payload);
+      toastStore.add(t("admin.saveSuccess"), "success");
       router.push("/admin/products");
     }
   } catch (e) {
-    saveError.value = e.message || t("admin.saveError");
+    toastStore.add(e.message || t("admin.saveError"), "error");
+  } finally {
+    saving.value = false;
   }
 }
 </script>
 
 <template>
   <div class="admin-product-edit">
-    <h1>{{ isEdit ? $t("admin.editProduct") : $t("admin.addProduct") }}</h1>
+    <div class="admin-product-edit__header">
+      <h1>{{ isEdit ? $t("admin.editProduct") : $t("admin.addProduct") }}</h1>
+      <p v-if="isEdit && updatedAt" class="updated-at">
+        {{ $t("admin.lastUpdated") }}: {{ formatDate(updatedAt) }}
+      </p>
+    </div>
 
-    <p v-if="isEdit && updatedAt" class="updated-at">
-      {{ $t("admin.lastUpdated") }}: {{ formatDate(updatedAt) }}
-    </p>
-
-    <form @submit.prevent="handleSubmit">
+    <form class="edit-form" @submit.prevent="handleSubmit">
       <!-- Language tabs -->
-      <div class="tabs">
+      <div class="tabs" role="tablist">
         <button
           type="button"
-          class="tab-zh-TW"
-          :class="{ active: activeTab === 'zh-TW' }"
+          role="tab"
+          class="tab"
+          :class="{ 'tab--active': activeTab === 'zh-TW' }"
+          :aria-selected="activeTab === 'zh-TW'"
           @click="activeTab = 'zh-TW'"
         >
           {{ $t("admin.tabZhTW") }}
         </button>
         <button
           type="button"
-          class="tab-en"
-          :class="{ active: activeTab === 'en' }"
+          role="tab"
+          class="tab"
+          :class="{ 'tab--active': activeTab === 'en' }"
+          :aria-selected="activeTab === 'en'"
           @click="activeTab = 'en'"
         >
           {{ $t("admin.tabEn") }}
         </button>
       </div>
 
-      <!-- zh-TW fields -->
-      <template v-if="activeTab === 'zh-TW'">
-        <div>
-          <label>{{ $t("product.name") }}</label>
-          <input v-model="form.name_zh" name="name_zh" type="text" />
-        </div>
-        <div>
-          <label>{{ $t("product.description") }}</label>
-          <textarea v-model="form.description_zh" name="description_zh" />
-        </div>
-      </template>
+      <div class="form-section">
+        <!-- zh-TW fields -->
+        <template v-if="activeTab === 'zh-TW'">
+          <div class="form-field">
+            <label for="name_zh">{{ $t("product.name") }}</label>
+            <input id="name_zh" v-model="form.name_zh" name="name_zh" type="text" />
+          </div>
+          <div class="form-field">
+            <label for="description_zh">{{ $t("product.description") }}</label>
+            <textarea id="description_zh" v-model="form.description_zh" name="description_zh" rows="4" />
+          </div>
+        </template>
 
-      <!-- en fields -->
-      <template v-if="activeTab === 'en'">
-        <div>
-          <label>Product Name</label>
-          <input v-model="form.name_en" name="name_en" type="text" />
-        </div>
-        <div>
-          <label>Description</label>
-          <textarea v-model="form.description_en" name="description_en" />
-        </div>
-      </template>
-
-      <!-- Composition (required, always visible) -->
-      <div>
-        <label>
-          {{ $t("product.composition") }}
-          <span class="required">{{ $t("admin.required") }}</span>
-        </label>
-        <input v-model="form.composition" name="composition" type="text" />
-        <span v-if="compositionError" class="composition-error">
-          {{ $t("admin.required") }}
-        </span>
+        <!-- en fields -->
+        <template v-if="activeTab === 'en'">
+          <div class="form-field">
+            <label for="name_en">{{ $t("product.name") }}</label>
+            <input id="name_en" v-model="form.name_en" name="name_en" type="text" />
+          </div>
+          <div class="form-field">
+            <label for="description_en">{{ $t("product.description") }}</label>
+            <textarea id="description_en" v-model="form.description_en" name="description_en" rows="4" />
+          </div>
+        </template>
       </div>
 
-      <!-- Optional spec fields -->
-      <div>
-        <label>{{ $t("product.yarnCount") }}</label>
-        <input v-model="form.yarn_count" name="yarn_count" type="text" />
-      </div>
-      <div>
-        <label>{{ $t("product.density") }}</label>
-        <input v-model="form.density" name="density" type="text" />
-      </div>
-      <div>
-        <label>{{ $t("product.weightGsm") }}</label>
-        <input v-model="form.weight_gsm" name="weight_gsm" type="number" />
-      </div>
-      <div>
-        <label>{{ $t("product.width") }}</label>
-        <input v-model="form.width" name="width" type="text" />
-      </div>
-      <div>
-        <label>{{ $t("product.weaveStructure") }}</label>
-        <input v-model="form.weave_structure" name="weave_structure" type="text" />
+      <!-- Specs section -->
+      <div class="form-section">
+        <div class="form-field" :class="{ 'form-field--error': compositionError }">
+          <label for="composition">
+            {{ $t("product.composition") }}
+            <span class="required-badge">{{ $t("admin.required") }}</span>
+          </label>
+          <input id="composition" v-model="form.composition" name="composition" type="text" />
+          <span v-if="compositionError" class="field-error" role="alert">
+            {{ $t("admin.required") }}
+          </span>
+        </div>
+
+        <div class="form-grid">
+          <div class="form-field">
+            <label for="yarn_count">{{ $t("product.yarnCount") }}</label>
+            <input id="yarn_count" v-model="form.yarn_count" name="yarn_count" type="text" />
+          </div>
+          <div class="form-field">
+            <label for="density">{{ $t("product.density") }}</label>
+            <input id="density" v-model="form.density" name="density" type="text" />
+          </div>
+          <div class="form-field">
+            <label for="weight_gsm">{{ $t("product.weightGsm") }}</label>
+            <input id="weight_gsm" v-model="form.weight_gsm" name="weight_gsm" type="number" />
+          </div>
+          <div class="form-field">
+            <label for="width">{{ $t("product.width") }}</label>
+            <input id="width" v-model="form.width" name="width" type="text" />
+          </div>
+          <div class="form-field">
+            <label for="weave_structure">{{ $t("product.weaveStructure") }}</label>
+            <input id="weave_structure" v-model="form.weave_structure" name="weave_structure" type="text" />
+          </div>
+        </div>
       </div>
 
       <!-- Tag management -->
-      <div class="tag-section">
-        <label>{{ $t("product.tags") }}</label>
-
-        <!-- Existing tags for selection -->
-        <div class="tag-options">
-          <button
-            v-for="tag in tagsStore.tags"
-            :key="tag"
-            type="button"
-            class="tag-option"
-            :class="{ selected: form.tags.includes(tag) }"
-            @click="form.tags.includes(tag) ? removeTag(tag) : addTag(tag)"
-          >
-            {{ tag }}
-          </button>
-        </div>
-
-        <!-- New tag input -->
-        <input
-          v-model="tagInput"
-          name="tag_input"
-          type="text"
-          placeholder="輸入新標籤後按 Enter"
-          @keydown="handleTagKeydown"
-        />
-
-        <!-- Selected tags -->
-        <div class="selected-tags">
-          <span
-            v-for="tag in form.tags"
-            :key="tag"
-            class="selected-tag"
-          >
-            {{ tag }}
-            <button type="button" class="remove-tag-btn" @click="removeTag(tag)">
-              ×
+      <div class="form-section">
+        <div class="form-field">
+          <label>{{ $t("product.tags") }}</label>
+          <div class="tag-options">
+            <button
+              v-for="tag in tagsStore.tags"
+              :key="tag"
+              type="button"
+              class="tag-option"
+              :class="{ 'tag-option--selected': form.tags.includes(tag) }"
+              @click="form.tags.includes(tag) ? removeTag(tag) : addTag(tag)"
+            >
+              {{ tag }}
             </button>
-          </span>
+          </div>
+          <input
+            v-model="tagInput"
+            name="tag_input"
+            type="text"
+            :placeholder="'輸入新標籤後按 Enter'"
+            class="tag-input"
+            @keydown="handleTagKeydown"
+          />
+          <div v-if="form.tags.length" class="selected-tags">
+            <span
+              v-for="tag in form.tags"
+              :key="tag"
+              class="selected-tag"
+            >
+              {{ tag }}
+              <button type="button" class="remove-tag-btn" :aria-label="`移除標籤 ${tag}`" @click="removeTag(tag)">
+                ×
+              </button>
+            </span>
+          </div>
         </div>
       </div>
 
       <!-- Image management (edit mode only) -->
       <AdminImageUpload v-if="isEdit" :productId="route.params.id" />
 
-      <p v-if="saveError" class="error">{{ saveError }}</p>
-
+      <!-- Form actions -->
       <div class="form-actions">
-        <button type="submit">{{ $t("admin.save") }}</button>
-        <button type="button" @click="router.push('/admin/products')">
+        <button
+          type="submit"
+          class="btn-save"
+          :disabled="saving"
+        >
+          <span v-if="saving">{{ "儲存中..." }}</span>
+          <span v-else>{{ $t("admin.save") }}</span>
+        </button>
+        <button type="button" class="btn-cancel" @click="router.push('/admin/products')">
           {{ $t("admin.cancel") }}
         </button>
       </div>
     </form>
   </div>
 </template>
+
+<style scoped>
+.admin-product-edit {
+  max-width: 800px;
+}
+
+.admin-product-edit__header {
+  margin-bottom: 1.5rem;
+}
+
+.admin-product-edit__header h1 {
+  font-size: var(--font-size-2xl);
+  margin: 0 0 0.25rem;
+}
+
+.updated-at {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 2px solid var(--color-border);
+  margin-bottom: 1.5rem;
+}
+
+.tab {
+  background: none;
+  border: none;
+  padding: 0.625rem 1.25rem;
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.tab:hover {
+  color: var(--color-text-primary);
+}
+
+.tab--active {
+  color: var(--color-cta);
+  font-weight: 600;
+  border-bottom-color: var(--color-cta);
+}
+
+.form-section {
+  padding-bottom: var(--space-6);
+  margin-bottom: var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.375rem;
+}
+
+.form-field label {
+  font-size: var(--font-size-sm);
+  font-weight: 500;
+  color: var(--color-text-primary);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form-field input,
+.form-field textarea,
+.form-field select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+  width: 100%;
+}
+
+.form-field input:focus,
+.form-field textarea:focus {
+  outline: none;
+  border-color: var(--color-cta);
+  box-shadow: 0 0 0 3px rgba(3, 105, 161, 0.12);
+}
+
+.form-field--error input {
+  border-color: var(--color-danger);
+}
+
+.form-field--error input:focus {
+  box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.field-error {
+  font-size: var(--font-size-xs);
+  color: var(--color-danger);
+  font-weight: 500;
+}
+
+.required-badge {
+  font-size: var(--font-size-xs);
+  color: var(--color-danger);
+  font-weight: 600;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+@media (max-width: 600px) {
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.tag-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+  margin-bottom: 0.5rem;
+}
+
+.tag-option {
+  padding: 0.25rem 0.625rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  background: transparent;
+  cursor: pointer;
+  font-size: var(--font-size-xs);
+  color: var(--color-text-secondary);
+  transition: all var(--transition-fast);
+}
+
+.tag-option:hover {
+  border-color: var(--color-cta);
+  color: var(--color-cta);
+}
+
+.tag-option--selected {
+  background: var(--color-cta);
+  border-color: var(--color-cta);
+  color: #fff;
+}
+
+.tag-input {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-sm);
+  width: 100%;
+}
+
+.selected-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.375rem;
+}
+
+.selected-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.2rem 0.5rem;
+  background: var(--color-cta);
+  color: #fff;
+  border-radius: var(--radius-full);
+  font-size: var(--font-size-xs);
+}
+
+.remove-tag-btn {
+  background: none;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 0.875rem;
+  line-height: 1;
+  padding: 0;
+  opacity: 0.8;
+}
+
+.remove-tag-btn:hover {
+  opacity: 1;
+}
+
+.form-actions {
+  position: sticky;
+  bottom: var(--space-4);
+  display: flex;
+  gap: 0.75rem;
+  padding-top: var(--space-6);
+  background: linear-gradient(to bottom, transparent, var(--color-background) 50%);
+}
+
+.btn-save {
+  background: var(--color-cta);
+  color: #fff;
+  border: none;
+  padding: 0.625rem 1.5rem;
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--transition-fast);
+  min-width: 100px;
+}
+
+.btn-save:hover:not(:disabled) {
+  background: var(--color-cta-hover);
+}
+
+.btn-save:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
+.btn-cancel {
+  background: transparent;
+  border: 1px solid var(--color-border-hover);
+  color: var(--color-text-secondary);
+  padding: 0.625rem 1.25rem;
+  border-radius: var(--radius-base);
+  font-size: var(--font-size-sm);
+  cursor: pointer;
+  transition: background var(--transition-fast);
+}
+
+.btn-cancel:hover {
+  background: var(--color-border);
+}
+</style>

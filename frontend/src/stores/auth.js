@@ -7,7 +7,7 @@ export const useAuthStore = defineStore("auth", () => {
   const refreshToken = ref(localStorage.getItem("refresh_token") || "");
   const username = ref("");
   const isActive = ref(false);
-  const redirectPath = ref("/admin/products");
+  const redirectPath = ref("/admin/dashboard");
 
   const isLoggedIn = computed(() => !!accessToken.value);
 
