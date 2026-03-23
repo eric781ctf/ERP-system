@@ -1,12 +1,17 @@
 import os
 from flask import Flask, jsonify
-from extensions import db, migrate, jwt
+from extensions import db, migrate, jwt, cors
 from config import config
 
 
 def create_app(config_name="default"):
     app = Flask(__name__)
     app.config.from_object(config[config_name])
+
+    allowed_origins = os.environ.get(
+        "CORS_ALLOWED_ORIGINS", "http://localhost:5173"
+    ).split(",")
+    cors.init_app(app, resources={r"/api/*": {"origins": allowed_origins}})
 
     db.init_app(app)
     migrate.init_app(app, db)
