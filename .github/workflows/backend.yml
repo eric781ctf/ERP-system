@@ -114,12 +114,23 @@ jobs:
                   \"Port\": \"8080\",
                   \"RuntimeEnvironmentVariables\": {
                     \"APP_VERSION\": \"$GITHUB_SHA\",
-                    \"CORS_ALLOWED_ORIGINS\": \"https://d3n7k0ruchkryg.cloudfront.net\"
+                    \"CORS_ALLOWED_ORIGINS\": \"https://d3n7k0ruchkryg.cloudfront.net\",
+                    \"DATABASE_URL\": \"${{ secrets.DATABASE_URL }}\"
                   }
                 },
                 \"ImageRepositoryType\": \"ECR\"
               }
             }"
+
+      # ── 6.5 Run DB migrations ─────────────────────────────────────
+      - name: Run DB migrations
+        run: |
+          pip install -r backend/requirements.txt -q
+          cd backend
+          flask db upgrade
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+          FLASK_ENV: development
 
       # ── 7. Wait for App Runner & health check ────────────────────
       - name: Wait for App Runner deployment
