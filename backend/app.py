@@ -15,6 +15,19 @@ def create_app(config_name="default"):
     import models.tag  # noqa: F401 — register Tag + product_tags table
     import models.product  # noqa: F401 — register FabricProduct
     import models.product_image  # noqa: F401 — register ProductImage
+    from models.user import TokenBlocklist  # noqa: F401 — register users + token_blocklist tables
+    import models.contact  # noqa: F401 — register Contact table
+
+    @jwt.token_in_blocklist_loader
+    def check_if_token_revoked(jwt_header, jwt_payload):
+        jti = jwt_payload["jti"]
+        token = db.session.execute(
+            db.select(TokenBlocklist).filter_by(jti=jti)
+        ).scalar_one_or_none()
+        return token is not None
+
+    from blueprints.auth import bp as auth_bp
+    app.register_blueprint(auth_bp, url_prefix="/api/v1/auth")
 
     from blueprints.products import bp as products_bp
     app.register_blueprint(products_bp, url_prefix="/api/v1/products")
@@ -22,8 +35,31 @@ def create_app(config_name="default"):
     from blueprints.tags import bp as tags_bp
     app.register_blueprint(tags_bp, url_prefix="/api/v1/tags")
 
+    from blueprints.contacts import bp as contacts_bp
+    app.register_blueprint(contacts_bp, url_prefix="/api/v1/contacts")
+
     @app.get("/health")
     def health():
         return jsonify({"status": "ok", "version": os.environ.get("APP_VERSION", "dev")}), 200
+
+    import click
+    from models.user import User
+
+    @app.cli.command("create-admin")
+    @click.option("--username", required=True, help="管理員帳號")
+    @click.option("--password", required=True, help="管理員密碼")
+    def create_admin(username, password):
+        """建立初始管理員帳號。"""
+        existing = db.session.execute(
+            db.select(User).filter_by(username=username)
+        ).scalar_one_or_none()
+        if existing:
+            click.echo(f"錯誤：帳號 '{username}' 已存在。")
+            return
+        user = User(username=username, is_active=True)
+        user.set_password(password)
+        db.session.add(user)
+        db.session.commit()
+        click.echo(f"管理員帳號 '{username}' 建立成功。")
 
     return app

@@ -1,0 +1,35 @@
+{
+  "contacts": {
+    "title": "Contact Management",
+    "addContact": "Add Contact",
+    "editContact": "Edit Contact",
+    "deleteConfirm": "Are you sure you want to delete this contact?",
+    "fields": {
+      "name": "Name",
+      "phone": "Phone",
+      "fax": "Fax",
+      "tax_id": "Tax ID",
+      "contactMethods": "Contact Methods",
+      "email": "Email",
+      "type": "Type",
+      "note": "Note"
+    },
+    "contactMethodOptions": {
+      "line": "LINE",
+      "whatsapp": "WhatsApp",
+      "wechat": "WeChat",
+      "email": "Email"
+    },
+    "types": {
+      "all": "All",
+      "customer": "Customer",
+      "supplier": "Supplier / Factory",
+      "unclassified": "Unclassified"
+    },
+    "error": {
+      "loadFailed": "Failed to load contacts",
+      "saveFailed": "Failed to save",
+      "emailRequired": "Email address is required when Email is selected as a contact method"
+    }
+  }
+}

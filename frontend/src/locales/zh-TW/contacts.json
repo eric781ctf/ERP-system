@@ -1,0 +1,35 @@
+{
+  "contacts": {
+    "title": "聯絡人管理",
+    "addContact": "新增聯絡人",
+    "editContact": "編輯聯絡人",
+    "deleteConfirm": "確定要刪除此聯絡人？",
+    "fields": {
+      "name": "名稱",
+      "phone": "電話",
+      "fax": "傳真",
+      "tax_id": "統一編號",
+      "contactMethods": "聯絡方式",
+      "email": "電子郵件",
+      "type": "類型",
+      "note": "備註"
+    },
+    "contactMethodOptions": {
+      "line": "LINE",
+      "whatsapp": "WhatsApp",
+      "wechat": "WeChat",
+      "email": "Email"
+    },
+    "types": {
+      "all": "全部",
+      "customer": "客戶",
+      "supplier": "工廠/供應商",
+      "unclassified": "未分類"
+    },
+    "error": {
+      "loadFailed": "載入聯絡人失敗",
+      "saveFailed": "儲存失敗",
+      "emailRequired": "選擇 Email 聯絡方式時，電子郵件地址為必填"
+    }
+  }
+}

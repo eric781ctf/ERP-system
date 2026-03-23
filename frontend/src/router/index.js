@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from "vue-router";
+import { useAuthStore } from "../stores/auth.js";
 
 export const routes = [
   {
@@ -12,6 +13,11 @@ export const routes = [
   {
     path: "/products/:id",
     component: () => import("../views/public/ProductDetailView.vue"),
+  },
+  {
+    path: "/login",
+    component: () => import("../views/auth/LoginView.vue"),
+    meta: { requiresGuest: true },
   },
   {
     path: "/admin",
@@ -33,6 +39,11 @@ export const routes = [
         component: () => import("../views/admin/AdminProductEditView.vue"),
         meta: { requiresAuth: true },
       },
+      {
+        path: "contacts",
+        component: () => import("../views/admin/ContactsView.vue"),
+        meta: { requiresAuth: true },
+      },
     ],
   },
 ];
@@ -44,9 +55,15 @@ const router = createRouter({
 
 // Auth navigation guard
 router.beforeEach((to) => {
-  const isAuthenticated = !!localStorage.getItem("access_token");
-  if (to.meta.requiresAuth && !isAuthenticated) {
+  const authStore = useAuthStore();
+
+  if (to.meta.requiresAuth && !authStore.isLoggedIn) {
+    authStore.redirectPath = to.fullPath;
     return { path: "/login" };
+  }
+
+  if (to.meta.requiresGuest && authStore.isLoggedIn) {
+    return { path: "/admin/products" };
   }
 });
 

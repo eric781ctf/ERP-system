@@ -1,5 +1,5 @@
 from flask import jsonify, request, current_app
-from flask_jwt_extended import jwt_required
+from flask_jwt_extended import jwt_required, get_jwt_identity, verify_jwt_in_request
 from extensions import db
 from models.product import FabricProduct
 from models.product_image import ProductImage
@@ -53,7 +53,14 @@ def _resolve_tags(tag_names):
 
 @bp.route("", methods=["GET"])
 def get_products():
-    query = FabricProduct.query.filter_by(is_published=True)
+    # Authenticated users (admin) can see all products including drafts
+    try:
+        verify_jwt_in_request(optional=True)
+        is_admin = get_jwt_identity() is not None
+    except Exception:
+        is_admin = False
+
+    query = FabricProduct.query if is_admin else FabricProduct.query.filter_by(is_published=True)
 
     tag_param = request.args.get("tags", "")
     if tag_param:
