@@ -3,6 +3,12 @@ import { ref, computed } from "vue";
 import { useProductsStore } from "./products.js";
 
 export const useCatalogFilterStore = defineStore("catalogFilter", () => {
+  // Obtain the products store at setup top-level so that all computed
+  // properties establish a stable reactive dependency on productsStore.products
+  // from the moment the store is initialized, rather than deferring the
+  // store lookup to each individual getter execution.
+  const productsStore = useProductsStore();
+
   // Selected filter arrays (one per dimension)
   const selectedCategories = ref([]);
   const selectedCompositions = ref([]);
@@ -10,7 +16,6 @@ export const useCatalogFilterStore = defineStore("catalogFilter", () => {
 
   // Derive available filter options from loaded products
   const availableFilters = computed(() => {
-    const productsStore = useProductsStore();
     const products = productsStore.products ?? [];
 
     const categories = [...new Set(
@@ -39,7 +44,6 @@ export const useCatalogFilterStore = defineStore("catalogFilter", () => {
 
   // filteredProducts — AND across dimensions, OR within dimension
   const filteredProducts = computed(() => {
-    const productsStore = useProductsStore();
     const products = productsStore.products ?? [];
 
     if (!hasActiveFilters.value) return products;

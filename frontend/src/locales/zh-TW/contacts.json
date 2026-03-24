@@ -26,6 +26,21 @@
       "supplier": "工廠/供應商",
       "unclassified": "未分類"
     },
+    "actions": {
+      "delete": "刪除",
+      "save": "儲存",
+      "cancel": "取消",
+      "confirmDelete": "確認刪除"
+    },
+    "table": {
+      "empty": "尚無聯絡人",
+      "loading": "載入中…",
+      "retry": "重試"
+    },
+    "sort": {
+      "asc": "升冪",
+      "desc": "降冪"
+    },
     "error": {
       "loadFailed": "載入聯絡人失敗",
       "saveFailed": "儲存失敗",

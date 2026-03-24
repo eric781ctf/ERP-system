@@ -10,7 +10,12 @@
       "userMenu": "User Menu",
       "adminCenter": "Admin Center",
       "logout": "Logout",
-      "helpCenter": "Help Center"
+      "helpCenter": "Help Center",
+      "langSwitcher": {
+        "label": "Switch language"
+      },
+      "langZhTW": "繁體中文",
+      "langEn": "English"
     },
     "brand": {
       "name": "Kady Textile Technology Co., Ltd."

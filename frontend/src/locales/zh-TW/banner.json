@@ -15,6 +15,9 @@
     "altText": "替代文字（alt）",
     "titleLabel": "標題",
     "description": "說明文字",
-    "linkUrl": "連結 URL"
+    "linkUrl": "連結 URL",
+    "dragHandle": "拖曳排序",
+    "reorderError": "排序失敗，已還原",
+    "sortOrder": "排序"
   }
 }

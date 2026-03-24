@@ -6,26 +6,41 @@
     </div>
 
     <!-- List -->
-    <div v-if="bannerStore.loading" class="banner-admin__loading">載入中…</div>
+    <div v-if="bannerStore.loading" class="banner-admin__loading">{{ t("banner.empty") }}</div>
 
-    <div v-else-if="bannerStore.banners.length === 0" class="banner-admin__empty">
+    <div v-else-if="localBanners.length === 0" class="banner-admin__empty">
       {{ t("banner.empty") }}
     </div>
 
-    <ul v-else class="banner-list">
+    <VueDraggable
+      v-else
+      v-model="localBanners"
+      tag="ul"
+      class="banner-list"
+      handle=".banner-list__drag-handle"
+      animation="150"
+      ghost-class="banner-list__item--ghost"
+      :disabled="reordering"
+      @end="onDragEnd"
+    >
       <li
-        v-for="banner in bannerStore.banners"
+        v-for="banner in localBanners"
         :key="banner.id"
         class="banner-list__item"
-        draggable="true"
-        @dragstart="onDragStart(banner.id)"
-        @dragover.prevent="onDragOver(banner.id)"
-        @drop="onDrop"
       >
+        <!-- Drag handle -->
+        <div
+          class="banner-list__drag-handle"
+          :title="t('banner.dragHandle')"
+          aria-hidden="true"
+        >
+          ⠿
+        </div>
+
         <img :src="banner.image_url" :alt="banner.alt_text || ''" class="banner-list__thumb" />
         <div class="banner-list__info">
           <span class="banner-list__title">{{ banner.title || t("banner.untitled") }}</span>
-          <span class="banner-list__order">順序 {{ banner.sort_order }}</span>
+          <span class="banner-list__order">{{ t("banner.sortOrder") }} {{ banner.sort_order }}</span>
         </div>
         <div class="banner-list__actions">
           <label class="toggle">
@@ -40,7 +55,7 @@
           <button class="btn btn--sm btn--danger" @click="confirmDelete(banner)">{{ t("banner.delete") }}</button>
         </div>
       </li>
-    </ul>
+    </VueDraggable>
 
     <!-- Modal: Add / Edit -->
     <Teleport to="body">
@@ -113,8 +128,9 @@
 </template>
 
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
+import { VueDraggable } from "vue-draggable-plus";
 import { useBannerStore } from "../../stores/banner.js";
 import { useToastStore } from "../../stores/toast.js";
 
@@ -123,6 +139,39 @@ const bannerStore = useBannerStore();
 const toastStore = useToastStore();
 
 onMounted(() => bannerStore.fetchBanners());
+
+// ── Local banner list for drag-to-reorder ─────────────────────────────────────
+const localBanners = ref([]);
+const reordering = ref(false);
+
+// Sync store → local only when not mid-reorder (prevents optimistic update overwrite)
+watch(
+  () => bannerStore.banners,
+  (val) => {
+    if (!reordering.value) {
+      localBanners.value = [...val];
+    }
+  },
+  { immediate: true }
+);
+
+// ── Drag-and-drop reorder ─────────────────────────────────────────────────────
+async function onDragEnd() {
+  // Snapshot was taken before the drag; VueDraggable has already mutated localBanners (optimistic)
+  const snapshot = [...localBanners.value]; // post-drag state is already set; keep for rollback on failure
+  const newOrderIds = localBanners.value.map((b) => b.id);
+
+  reordering.value = true;
+  try {
+    await bannerStore.reorderBanners(newOrderIds);
+  } catch {
+    // Rollback: restore to the pre-drag snapshot held in bannerStore.banners
+    localBanners.value = [...bannerStore.banners];
+    toastStore.add(t("banner.reorderError"), "error");
+  } finally {
+    reordering.value = false;
+  }
+}
 
 // ── Form state ────────────────────────────────────────────────────────────────
 const showModal = ref(false);
@@ -253,37 +302,6 @@ async function handleToggle(banner) {
     toastStore.add(bannerStore.error || "切換失敗", "error");
   }
 }
-
-// ── Drag-and-drop reorder ─────────────────────────────────────────────────────
-let dragSourceId = null;
-let dragOverId = null;
-
-function onDragStart(id) {
-  dragSourceId = id;
-}
-
-function onDragOver(id) {
-  dragOverId = id;
-}
-
-async function onDrop() {
-  if (dragSourceId === null || dragOverId === null || dragSourceId === dragOverId) return;
-
-  const ids = bannerStore.banners.map((b) => b.id);
-  const fromIdx = ids.indexOf(dragSourceId);
-  const toIdx = ids.indexOf(dragOverId);
-  ids.splice(fromIdx, 1);
-  ids.splice(toIdx, 0, dragSourceId);
-
-  try {
-    await bannerStore.reorderBanners(ids);
-  } catch {
-    toastStore.add(bannerStore.error || "排序失敗", "error");
-  } finally {
-    dragSourceId = null;
-    dragOverId = null;
-  }
-}
 </script>
 
 <style scoped>
@@ -329,11 +347,32 @@ async function onDrop() {
   border: 1px solid #e2e8f0;
   border-radius: 8px;
   padding: 0.75rem 1rem;
-  cursor: grab;
 }
 
-.banner-list__item:active {
-  cursor: grabbing;
+.banner-list__item--ghost {
+  opacity: 0.4;
+  border: 2px dashed #0369a1;
+}
+
+/* Drag handle */
+.banner-list__drag-handle {
+  flex-shrink: 0;
+  color: #94a3b8;
+  font-size: 1.125rem;
+  cursor: grab;
+  user-select: none;
+  padding: 0.125rem 0.25rem;
+  border-radius: 3px;
+  line-height: 1;
+}
+
+.banner-list__drag-handle:hover {
+  color: #475569;
+  background: #f1f5f9;
+}
+
+.banner-list__item:not([data-v-dragging]) .banner-list__drag-handle {
+  cursor: grab;
 }
 
 .banner-list__thumb {

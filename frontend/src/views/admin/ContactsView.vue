@@ -1,5 +1,5 @@
 <script setup>
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useContactsStore } from "../../stores/contacts.js";
 
@@ -23,6 +23,38 @@ function selectTab(tab) {
 onMounted(() => {
   contactsStore.fetchContacts({});
 });
+
+// ── 排序 ───────────────────────────────────────────────────────────────────────
+const sortKey = ref(null); // 'name' | 'phone' | 'type' | null
+const sortDir = ref("asc"); // 'asc' | 'desc'
+
+function toggleSort(key) {
+  if (sortKey.value === key) {
+    sortDir.value = sortDir.value === "asc" ? "desc" : "asc";
+  } else {
+    sortKey.value = key;
+    sortDir.value = "asc";
+  }
+}
+
+const sortedContacts = computed(() => {
+  const contacts = [...(contactsStore.contacts || [])];
+  if (!sortKey.value) return contacts;
+  const key = sortKey.value;
+  const dir = sortDir.value === "asc" ? 1 : -1;
+  return contacts.sort((a, b) => {
+    const va = (a[key] ?? "").toString().toLowerCase();
+    const vb = (b[key] ?? "").toString().toLowerCase();
+    if (va < vb) return -1 * dir;
+    if (va > vb) return 1 * dir;
+    return 0;
+  });
+});
+
+function sortIcon(key) {
+  if (sortKey.value !== key) return "↕";
+  return sortDir.value === "asc" ? "↑" : "↓";
+}
 
 // ── Modal 狀態 ─────────────────────────────────────────────────────────────────
 const showModal = ref(false);
@@ -146,49 +178,67 @@ function typeLabel(type) {
       </button>
     </div>
 
-    <p v-if="contactsStore.loading">Loading...</p>
-    <p v-else-if="contactsStore.error" class="error">{{ contactsStore.error }}</p>
+    <!-- 錯誤提示 + 重試 -->
+    <div v-if="contactsStore.error" class="contacts-error" data-testid="contacts-error">
+      <span>{{ contactsStore.error }}</span>
+      <button data-testid="retry-btn" @click="contactsStore.fetchContacts(activeTab === 'all' ? {} : { type: activeTab })">
+        {{ t("contacts.table.retry") }}
+      </button>
+    </div>
 
-    <!-- 聯絡人列表 -->
-    <table v-if="contactsStore.contacts.length > 0">
-      <thead>
-        <tr>
-          <th>{{ t("contacts.fields.name") }}</th>
-          <th>{{ t("contacts.fields.phone") }}</th>
-          <th>{{ t("contacts.fields.fax") }}</th>
-          <th>{{ t("contacts.fields.tax_id") }}</th>
-          <th>{{ t("contacts.fields.contactMethods") }}</th>
-          <th>{{ t("contacts.fields.email") }}</th>
-          <th>{{ t("contacts.fields.type") }}</th>
-          <th>{{ t("contacts.fields.note") }}</th>
-          <th></th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr v-for="contact in contactsStore.contacts" :key="contact.id">
-          <td>{{ contact.name }}</td>
-          <td>{{ contact.phone }}</td>
-          <td>{{ contact.fax }}</td>
-          <td>{{ contact.tax_id }}</td>
-          <td>
-            <span
-              v-for="method in contact.contact_methods"
-              :key="method"
-              class="method-badge"
-            >
-              {{ t(`contacts.contactMethodOptions.${method}`) }}
-            </span>
-          </td>
-          <td>{{ contact.email }}</td>
-          <td>{{ typeLabel(contact.type) }}</td>
-          <td>{{ contact.note }}</td>
-          <td>
-            <button @click="openEdit(contact)">{{ t("contacts.editContact") }}</button>
-            <button @click="requestDelete(contact.id)">刪除</button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+    <!-- 表格區域（含捲動容器） -->
+    <div class="table-scroll-wrapper">
+      <table class="contacts-table">
+        <thead>
+          <tr>
+            <th class="col-name" @click="toggleSort('name')" style="cursor:pointer">
+              {{ t("contacts.fields.name") }}
+              <span class="sort-icon" aria-hidden="true">{{ sortIcon("name") }}</span>
+            </th>
+            <th class="col-phone" @click="toggleSort('phone')" style="cursor:pointer">
+              {{ t("contacts.fields.phone") }}
+              <span class="sort-icon" aria-hidden="true">{{ sortIcon("phone") }}</span>
+            </th>
+            <th class="col-type" @click="toggleSort('type')" style="cursor:pointer">
+              {{ t("contacts.fields.type") }}
+              <span class="sort-icon" aria-hidden="true">{{ sortIcon("type") }}</span>
+            </th>
+            <th class="col-actions"></th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- 載入骨架列 -->
+          <template v-if="contactsStore.loading">
+            <tr v-for="n in 5" :key="`skeleton-${n}`" class="skeleton-row" data-testid="skeleton-row">
+              <td><span class="skeleton-cell"></span></td>
+              <td><span class="skeleton-cell"></span></td>
+              <td><span class="skeleton-cell"></span></td>
+              <td><span class="skeleton-cell skeleton-cell--sm"></span></td>
+            </tr>
+          </template>
+
+          <!-- 空狀態 -->
+          <tr v-else-if="sortedContacts.length === 0">
+            <td colspan="4" class="empty-state" data-testid="empty-state">
+              {{ t("contacts.table.empty") }}
+            </td>
+          </tr>
+
+          <!-- 資料列 -->
+          <template v-else>
+            <tr v-for="contact in sortedContacts" :key="contact.id">
+              <td>{{ contact.name }}</td>
+              <td>{{ contact.phone }}</td>
+              <td>{{ typeLabel(contact.type) }}</td>
+              <td class="actions-cell">
+                <button @click="openEdit(contact)">{{ t("contacts.editContact") }}</button>
+                <button @click="requestDelete(contact.id)">{{ t("contacts.actions.delete") }}</button>
+              </td>
+            </tr>
+          </template>
+        </tbody>
+      </table>
+    </div>
 
     <!-- 新增/編輯 Modal -->
     <div v-if="showModal" class="modal-overlay">
@@ -252,8 +302,8 @@ function typeLabel(type) {
         <p v-if="saveError" class="error">{{ saveError }}</p>
 
         <div class="modal-actions">
-          <button @click="handleSave">儲存</button>
-          <button @click="closeModal">取消</button>
+          <button @click="handleSave">{{ t("contacts.actions.save") }}</button>
+          <button @click="closeModal">{{ t("contacts.actions.cancel") }}</button>
         </div>
       </div>
     </div>
@@ -261,8 +311,8 @@ function typeLabel(type) {
     <!-- 刪除確認 Dialog -->
     <div v-if="confirmDeleteId !== null" class="confirm-dialog">
       <p>{{ t("contacts.deleteConfirm") }}</p>
-      <button @click="confirmDelete">確認刪除</button>
-      <button @click="cancelDelete">取消</button>
+      <button @click="confirmDelete">{{ t("contacts.actions.confirmDelete") }}</button>
+      <button @click="cancelDelete">{{ t("contacts.actions.cancel") }}</button>
     </div>
   </div>
 </template>
@@ -272,5 +322,105 @@ function typeLabel(type) {
   color: #dc2626;
   font-weight: 600;
   font-size: 0.8125rem;
+}
+
+/* 表格捲動容器 */
+.table-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+/* 聯絡人表格 */
+.contacts-table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 480px;
+  font-size: 0.9375rem;
+}
+
+.contacts-table thead th {
+  text-align: left;
+  padding: 0.625rem 0.75rem;
+  border-bottom: 2px solid #e2e8f0;
+  font-weight: 600;
+  color: #334155;
+  white-space: nowrap;
+  user-select: none;
+}
+
+.contacts-table thead th:hover {
+  background: #f8fafc;
+}
+
+.contacts-table tbody td {
+  padding: 0.625rem 0.75rem;
+  border-bottom: 1px solid #f1f5f9;
+  color: #1e293b;
+  vertical-align: middle;
+}
+
+/* Column widths */
+.col-name    { width: 30%; }
+.col-phone   { width: 25%; }
+.col-type    { width: 20%; }
+.col-actions { width: 25%; }
+
+.sort-icon {
+  margin-left: 0.25rem;
+  font-size: 0.75rem;
+  color: #94a3b8;
+}
+
+/* Actions cell */
+.actions-cell {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+/* Empty state */
+.empty-state {
+  text-align: center;
+  padding: 2.5rem 0;
+  color: #64748b;
+  font-size: 0.9375rem;
+}
+
+/* Skeleton rows */
+.skeleton-row td {
+  padding: 0.75rem;
+}
+
+.skeleton-cell {
+  display: block;
+  height: 1rem;
+  width: 80%;
+  background: linear-gradient(90deg, #f1f5f9 25%, #e2e8f0 50%, #f1f5f9 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 4px;
+}
+
+.skeleton-cell--sm {
+  width: 50%;
+}
+
+@keyframes shimmer {
+  0%   { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Error banner */
+.contacts-error {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.625rem 0.875rem;
+  background: #fef2f2;
+  border: 1px solid #fecaca;
+  border-radius: 6px;
+  color: #dc2626;
+  font-size: 0.875rem;
+  margin-bottom: 0.75rem;
 }
 </style>

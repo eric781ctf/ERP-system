@@ -26,6 +26,21 @@
       "supplier": "Supplier / Factory",
       "unclassified": "Unclassified"
     },
+    "actions": {
+      "delete": "Delete",
+      "save": "Save",
+      "cancel": "Cancel",
+      "confirmDelete": "Confirm Delete"
+    },
+    "table": {
+      "empty": "No contacts yet",
+      "loading": "Loading…",
+      "retry": "Retry"
+    },
+    "sort": {
+      "asc": "Ascending",
+      "desc": "Descending"
+    },
     "error": {
       "loadFailed": "Failed to load contacts",
       "saveFailed": "Failed to save",

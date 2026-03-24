@@ -134,12 +134,17 @@ onUnmounted(stopAutoplay);
 .carousel__track {
   position: relative;
   width: 100%;
-  aspect-ratio: 16 / 5;
+  /* min-height: 50vh keeps the carousel at 50 % of the viewport height on
+     desktop, satisfying the 50–60 % requirement (req 2.2).
+     The previous aspect-ratio: 16/5 rendered at only ~20 % viewport height. */
+  min-height: 50vh;
 }
 
 @media (max-width: 639px) {
   .carousel__track {
-    aspect-ratio: 4 / 3;
+    /* On mobile, 40vh provides a visually appropriate shorter height while
+       still filling enough screen to showcase banner images. */
+    min-height: 40vh;
   }
 }
 

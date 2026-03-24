@@ -15,6 +15,9 @@
     "altText": "Alt text",
     "titleLabel": "Title",
     "description": "Description",
-    "linkUrl": "Link URL"
+    "linkUrl": "Link URL",
+    "dragHandle": "Drag to reorder",
+    "reorderError": "Reorder failed, reverted",
+    "sortOrder": "Order"
   }
 }
