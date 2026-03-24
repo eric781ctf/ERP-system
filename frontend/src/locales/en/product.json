@@ -24,6 +24,7 @@
       "category": "Category",
       "composition": "Composition / Material",
       "weaveStructure": "Weave Structure",
+      "tags": "Tags",
       "clearAll": "Clear Filters",
       "openDrawer": "Open Filters",
       "closeDrawer": "Close Filters"

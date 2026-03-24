@@ -24,6 +24,7 @@
       "category": "產品分類",
       "composition": "成份／材質",
       "weaveStructure": "組織結構",
+      "tags": "標籤",
       "clearAll": "清除篩選",
       "openDrawer": "開啟篩選",
       "closeDrawer": "關閉篩選"

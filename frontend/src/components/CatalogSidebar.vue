@@ -2,9 +2,11 @@
 import { ref, onMounted, onUnmounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useCatalogFilterStore } from "../stores/catalogFilter.js";
+import { useTagsStore } from "../stores/tags.js";
 
 const { t } = useI18n();
 const filterStore = useCatalogFilterStore();
+const tagsStore = useTagsStore();
 
 const props = defineProps({
   isOpen: {
@@ -147,11 +149,32 @@ onUnmounted(() => {
       </fieldset>
     </div>
 
+    <!-- Tags filter (only shown when tags exist) -->
+    <div v-if="tagsStore.tags.length" class="catalog-sidebar__group">
+      <fieldset class="catalog-sidebar__fieldset">
+        <legend class="catalog-sidebar__group-title">{{ t("catalog.filter.tags") }}</legend>
+        <label
+          v-for="tag in tagsStore.tags"
+          :key="tag"
+          class="catalog-sidebar__option"
+        >
+          <input
+            type="checkbox"
+            :value="tag"
+            :checked="tagsStore.selectedTags.includes(tag)"
+            class="catalog-sidebar__checkbox"
+            @change="tagsStore.selectedTags.includes(tag) ? tagsStore.deselectTag(tag) : tagsStore.selectTag(tag)"
+          />
+          {{ tag }}
+        </label>
+      </fieldset>
+    </div>
+
     <!-- Clear all filters -->
     <button
-      v-if="filterStore.hasActiveFilters"
+      v-if="filterStore.hasActiveFilters || tagsStore.selectedTags.length"
       class="catalog-sidebar__clear-btn"
-      @click="filterStore.clearAllFilters()"
+      @click="filterStore.clearAllFilters(); tagsStore.clearSelection()"
     >
       {{ t("catalog.filter.clearAll") }}
     </button>
