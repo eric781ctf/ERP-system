@@ -18,6 +18,7 @@ class ProductSummarySchema(Schema):
     name_zh = fields.Str(dump_only=True)
     name_en = fields.Str(dump_only=True, allow_none=True)
     composition = fields.Str(dump_only=True)
+    weave_structure = fields.Str(dump_only=True, allow_none=True)
     is_published = fields.Bool(dump_only=True)
     updated_at = fields.DateTime(dump_only=True, format="iso")
     cover_image_url = fields.Method("get_cover_image_url")

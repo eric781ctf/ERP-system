@@ -84,8 +84,8 @@ onUnmounted(() => {
       </button>
     </div>
 
-    <!-- Category filter -->
-    <div class="catalog-sidebar__group">
+    <!-- Category filter (only shown when options exist) -->
+    <div v-if="filterStore.availableFilters.categories.length" class="catalog-sidebar__group">
       <fieldset class="catalog-sidebar__fieldset">
         <legend class="catalog-sidebar__group-title">{{ t("catalog.filter.category") }}</legend>
         <label
@@ -105,8 +105,8 @@ onUnmounted(() => {
       </fieldset>
     </div>
 
-    <!-- Composition filter -->
-    <div class="catalog-sidebar__group">
+    <!-- Composition filter (only shown when options exist) -->
+    <div v-if="filterStore.availableFilters.compositions.length" class="catalog-sidebar__group">
       <fieldset class="catalog-sidebar__fieldset">
         <legend class="catalog-sidebar__group-title">{{ t("catalog.filter.composition") }}</legend>
         <label
@@ -126,8 +126,8 @@ onUnmounted(() => {
       </fieldset>
     </div>
 
-    <!-- Weave Structure filter -->
-    <div class="catalog-sidebar__group">
+    <!-- Weave Structure filter (only shown when options exist) -->
+    <div v-if="filterStore.availableFilters.weaveStructures.length" class="catalog-sidebar__group">
       <fieldset class="catalog-sidebar__fieldset">
         <legend class="catalog-sidebar__group-title">{{ t("catalog.filter.weaveStructure") }}</legend>
         <label
