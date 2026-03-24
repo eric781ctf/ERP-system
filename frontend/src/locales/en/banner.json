@@ -1,0 +1,20 @@
+{
+  "banner": {
+    "add": "Add Banner",
+    "edit": "Edit",
+    "delete": "Delete",
+    "save": "Save",
+    "saving": "Saving…",
+    "cancel": "Cancel",
+    "active": "Active",
+    "inactive": "Inactive",
+    "untitled": "(Untitled)",
+    "empty": "No banners yet",
+    "deleteConfirm": "Are you sure you want to delete this banner?",
+    "image": "Image",
+    "altText": "Alt text",
+    "titleLabel": "Title",
+    "description": "Description",
+    "linkUrl": "Link URL"
+  }
+}

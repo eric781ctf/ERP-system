@@ -33,6 +33,17 @@ class S3UploadService:
 
         return self._upload_to_s3(key, file_bytes, content_type)
 
+    def upload_banner_image(self, file_bytes: bytes, filename: str) -> str:
+        """Validate, upload banner image to S3 under banners/ prefix, return public URL."""
+        self._validate_extension(filename)
+        self._validate_size(file_bytes)
+
+        ext = os.path.splitext(filename)[1].lower()
+        key = f"banners/{uuid.uuid4().hex}{ext}"
+        content_type = "image/jpeg" if ext in (".jpg", ".jpeg") else "image/png"
+
+        return self._upload_to_s3(key, file_bytes, content_type)
+
     def delete_image(self, s3_key: str) -> None:
         """Delete from S3. Logs errors, never raises."""
         try:

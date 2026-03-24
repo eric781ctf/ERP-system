@@ -56,6 +56,11 @@ export const routes = [
         component: () => import("../views/admin/ContactsView.vue"),
         meta: { requiresAuth: true },
       },
+      {
+        path: "banners",
+        component: () => import("../views/admin/AdminBannerView.vue"),
+        meta: { requiresAuth: true },
+      },
     ],
   },
 ];

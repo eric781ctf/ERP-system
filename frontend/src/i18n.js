@@ -7,6 +7,8 @@ import zhTWContacts from "./locales/zh-TW/contacts.json";
 import enContacts from "./locales/en/contacts.json";
 import zhTWLayout from "./locales/zh-TW/layout.json";
 import enLayout from "./locales/en/layout.json";
+import zhTWBanner from "./locales/zh-TW/banner.json";
+import enBanner from "./locales/en/banner.json";
 
 const savedLocale = localStorage.getItem("locale") || "zh-TW";
 
@@ -15,8 +17,8 @@ const i18n = createI18n({
   locale: savedLocale,
   fallbackLocale: "zh-TW",
   messages: {
-    "zh-TW": { ...zhTW, ...zhTWAuth, ...zhTWContacts, ...zhTWLayout },
-    en: { ...en, ...enAuth, ...enContacts, ...enLayout },
+    "zh-TW": { ...zhTW, ...zhTWAuth, ...zhTWContacts, ...zhTWLayout, ...zhTWBanner },
+    en: { ...en, ...enAuth, ...enContacts, ...enLayout, ...enBanner },
   },
 });
 

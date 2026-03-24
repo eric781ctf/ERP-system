@@ -38,6 +38,7 @@ const route = useRoute();
 const navItems = [
   { label: "layout.nav.products", to: "/admin/products" },
   { label: "layout.nav.contacts", to: "/admin/contacts" },
+  { label: "layout.nav.banners", to: "/admin/banners" },
 ];
 
 function isActive(path) {

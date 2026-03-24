@@ -5,7 +5,8 @@
       "catalog": "Product Catalog",
       "products": "Products",
       "contacts": "Contacts",
-      "staffLogin": "Staff Login"
+      "staffLogin": "Staff Login",
+      "banners": "Banner Management"
     },
     "header": {
       "logout": "Logout",
@@ -26,5 +27,12 @@
         "enter": "Go to Contacts"
       }
     }
+  },
+  "carousel": {
+    "ariaLabel": "Banner carousel",
+    "prev": "Previous",
+    "next": "Next",
+    "slide": "Slide",
+    "learnMore": "Learn more"
   }
 }

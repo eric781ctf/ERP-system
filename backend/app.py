@@ -22,6 +22,7 @@ def create_app(config_name="default"):
     import models.product_image  # noqa: F401 — register ProductImage
     from models.user import TokenBlocklist  # noqa: F401 — register users + token_blocklist tables
     import models.contact  # noqa: F401 — register Contact table
+    import models.banner  # noqa: F401 — register Banner table
 
     @jwt.token_in_blocklist_loader
     def check_if_token_revoked(jwt_header, jwt_payload):
@@ -42,6 +43,9 @@ def create_app(config_name="default"):
 
     from blueprints.contacts import bp as contacts_bp
     app.register_blueprint(contacts_bp, url_prefix="/api/v1/contacts")
+
+    from blueprints.banners import bp as banners_bp
+    app.register_blueprint(banners_bp, url_prefix="/api/v1/banners")
 
     @app.get("/health")
     def health():
