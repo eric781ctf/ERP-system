@@ -36,6 +36,7 @@ const { t } = useI18n();
 const route = useRoute();
 
 const navItems = [
+  { label: "layout.nav.helpCenter", to: "/admin/help-center" },
   { label: "layout.nav.products", to: "/admin/products" },
   { label: "layout.nav.contacts", to: "/admin/contacts" },
   { label: "layout.nav.banners", to: "/admin/banners" },
@@ -110,10 +111,12 @@ function handleNavClick() {
 
 @media (min-width: 1024px) {
   .sidebar {
-    position: static;
+    position: sticky;
+    top: 0;
     display: flex;
     transform: none;
     height: 100vh;
+    overflow-y: auto;
     flex-shrink: 0;
   }
 }

@@ -49,7 +49,7 @@
           <h2 class="modal__title">{{ editingId ? t("banner.edit") : t("banner.add") }}</h2>
 
           <div class="modal__field">
-            <label>{{ t("banner.image") }} <span v-if="!editingId" class="required">*</span></label>
+            <label>{{ t("banner.image") }} <span v-if="!editingId" class="required-badge">{{ t("admin.required") }}</span></label>
             <input
               ref="fileInput"
               type="file"
@@ -514,7 +514,9 @@ async function onDrop() {
   margin-top: 1.5rem;
 }
 
-.required {
+.required-badge {
   color: #dc2626;
+  font-weight: 600;
+  font-size: 0.8125rem;
 }
 </style>

@@ -71,6 +71,7 @@ async function confirmDelete() {
       <table class="product-table">
         <thead>
           <tr>
+            <th class="th-thumb"></th>
             <th>{{ $t("product.name") }}</th>
             <th>{{ $t("admin.lastUpdated") }}</th>
             <th>{{ $t("admin.status") }}</th>
@@ -82,6 +83,21 @@ async function confirmDelete() {
             v-for="product in productsStore.products"
             :key="product.id"
           >
+            <td class="td-thumb">
+              <img
+                v-if="product.cover_image_url"
+                :src="product.cover_image_url"
+                :alt="product.name_zh"
+                class="product-thumb"
+              />
+              <div v-else class="product-thumb-placeholder" aria-hidden="true">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" width="24" height="24">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <circle cx="8.5" cy="8.5" r="1.5" />
+                  <path d="M21 15l-5-5L5 21" />
+                </svg>
+              </div>
+            </td>
             <td>{{ product.name_zh }}</td>
             <td>{{ formatDate(product.updated_at) }}</td>
             <td>
@@ -195,6 +211,34 @@ async function confirmDelete() {
 
 .product-table tbody tr:hover {
   background: rgba(0, 0, 0, 0.02);
+}
+
+.th-thumb {
+  width: 64px;
+}
+
+.td-thumb {
+  width: 64px;
+  padding: 0.5rem;
+}
+
+.product-thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 4px;
+  display: block;
+}
+
+.product-thumb-placeholder {
+  width: 48px;
+  height: 48px;
+  background: #f1f5f9;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #94a3b8;
 }
 
 .product-table tbody tr:last-child td {

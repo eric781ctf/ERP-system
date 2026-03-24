@@ -51,7 +51,7 @@ async function handleLogin() {
       <form class="login-form" @submit.prevent="handleLogin" novalidate>
         <!-- Username -->
         <div class="form-group">
-          <label for="username">{{ t("auth.login.username") }}</label>
+          <label for="username">{{ t("auth.login.username") }} <span class="required-badge">{{ t("admin.required") }}</span></label>
           <input
             id="username"
             v-model="username"
@@ -67,7 +67,7 @@ async function handleLogin() {
 
         <!-- Password -->
         <div class="form-group">
-          <label for="password">{{ t("auth.login.password") }}</label>
+          <label for="password">{{ t("auth.login.password") }} <span class="required-badge">{{ t("admin.required") }}</span></label>
           <div class="password-wrapper">
             <input
               id="password"
@@ -156,6 +156,12 @@ async function handleLogin() {
   font-size: 0.875rem;
   font-weight: 500;
   color: var(--color-primary, #0f172a);
+}
+
+.required-badge {
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 0.8125rem;
 }
 
 .form-group input {

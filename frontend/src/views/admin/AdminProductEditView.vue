@@ -107,9 +107,9 @@ async function handleSubmit() {
   saving.value = true;
   try {
     if (isEdit.value) {
-      const updated = await productsStore.updateProduct(route.params.id, payload);
-      updatedAt.value = updated.updated_at;
+      await productsStore.updateProduct(route.params.id, payload);
       toastStore.add(t("admin.saveSuccess"), "success");
+      router.push("/admin/products");
     } else {
       await productsStore.createProduct(payload);
       toastStore.add(t("admin.saveSuccess"), "success");
@@ -133,134 +133,147 @@ async function handleSubmit() {
     </div>
 
     <form class="edit-form" @submit.prevent="handleSubmit">
-      <!-- Language tabs -->
-      <div class="tabs" role="tablist">
-        <button
-          type="button"
-          role="tab"
-          class="tab"
-          :class="{ 'tab--active': activeTab === 'zh-TW' }"
-          :aria-selected="activeTab === 'zh-TW'"
-          @click="activeTab = 'zh-TW'"
-        >
-          {{ $t("admin.tabZhTW") }}
-        </button>
-        <button
-          type="button"
-          role="tab"
-          class="tab"
-          :class="{ 'tab--active': activeTab === 'en' }"
-          :aria-selected="activeTab === 'en'"
-          @click="activeTab = 'en'"
-        >
-          {{ $t("admin.tabEn") }}
-        </button>
-      </div>
+      <div class="edit-layout">
+        <!-- Left column: image management or placeholder -->
+        <aside class="edit-layout__images">
+          <AdminImageUpload v-if="isEdit" :productId="route.params.id" />
+          <div v-else class="image-placeholder">
+            <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+            <p>{{ $t("admin.imagePlaceholderHint") }}</p>
+          </div>
+        </aside>
 
-      <div class="form-section">
-        <!-- zh-TW fields -->
-        <template v-if="activeTab === 'zh-TW'">
-          <div class="form-field">
-            <label for="name_zh">{{ $t("product.name") }}</label>
-            <input id="name_zh" v-model="form.name_zh" name="name_zh" type="text" />
-          </div>
-          <div class="form-field">
-            <label for="description_zh">{{ $t("product.description") }}</label>
-            <textarea id="description_zh" v-model="form.description_zh" name="description_zh" rows="4" />
-          </div>
-        </template>
-
-        <!-- en fields -->
-        <template v-if="activeTab === 'en'">
-          <div class="form-field">
-            <label for="name_en">{{ $t("product.name") }}</label>
-            <input id="name_en" v-model="form.name_en" name="name_en" type="text" />
-          </div>
-          <div class="form-field">
-            <label for="description_en">{{ $t("product.description") }}</label>
-            <textarea id="description_en" v-model="form.description_en" name="description_en" rows="4" />
-          </div>
-        </template>
-      </div>
-
-      <!-- Specs section -->
-      <div class="form-section">
-        <div class="form-field" :class="{ 'form-field--error': compositionError }">
-          <label for="composition">
-            {{ $t("product.composition") }}
-            <span class="required-badge">{{ $t("admin.required") }}</span>
-          </label>
-          <input id="composition" v-model="form.composition" name="composition" type="text" />
-          <span v-if="compositionError" class="field-error" role="alert">
-            {{ $t("admin.required") }}
-          </span>
-        </div>
-
-        <div class="form-grid">
-          <div class="form-field">
-            <label for="yarn_count">{{ $t("product.yarnCount") }}</label>
-            <input id="yarn_count" v-model="form.yarn_count" name="yarn_count" type="text" />
-          </div>
-          <div class="form-field">
-            <label for="density">{{ $t("product.density") }}</label>
-            <input id="density" v-model="form.density" name="density" type="text" />
-          </div>
-          <div class="form-field">
-            <label for="weight_gsm">{{ $t("product.weightGsm") }}</label>
-            <input id="weight_gsm" v-model="form.weight_gsm" name="weight_gsm" type="number" />
-          </div>
-          <div class="form-field">
-            <label for="width">{{ $t("product.width") }}</label>
-            <input id="width" v-model="form.width" name="width" type="text" />
-          </div>
-          <div class="form-field">
-            <label for="weave_structure">{{ $t("product.weaveStructure") }}</label>
-            <input id="weave_structure" v-model="form.weave_structure" name="weave_structure" type="text" />
-          </div>
-        </div>
-      </div>
-
-      <!-- Tag management -->
-      <div class="form-section">
-        <div class="form-field">
-          <label>{{ $t("product.tags") }}</label>
-          <div class="tag-options">
+        <!-- Right column (or full width in create mode): form fields -->
+        <div class="edit-layout__fields">
+          <!-- Language tabs -->
+          <div class="tabs" role="tablist">
             <button
-              v-for="tag in tagsStore.tags"
-              :key="tag"
               type="button"
-              class="tag-option"
-              :class="{ 'tag-option--selected': form.tags.includes(tag) }"
-              @click="form.tags.includes(tag) ? removeTag(tag) : addTag(tag)"
+              role="tab"
+              class="tab"
+              :class="{ 'tab--active': activeTab === 'zh-TW' }"
+              :aria-selected="activeTab === 'zh-TW'"
+              @click="activeTab = 'zh-TW'"
             >
-              {{ tag }}
+              {{ $t("admin.tabZhTW") }}
+            </button>
+            <button
+              type="button"
+              role="tab"
+              class="tab"
+              :class="{ 'tab--active': activeTab === 'en' }"
+              :aria-selected="activeTab === 'en'"
+              @click="activeTab = 'en'"
+            >
+              {{ $t("admin.tabEn") }}
             </button>
           </div>
-          <input
-            v-model="tagInput"
-            name="tag_input"
-            type="text"
-            :placeholder="'輸入新標籤後按 Enter'"
-            class="tag-input"
-            @keydown="handleTagKeydown"
-          />
-          <div v-if="form.tags.length" class="selected-tags">
-            <span
-              v-for="tag in form.tags"
-              :key="tag"
-              class="selected-tag"
-            >
-              {{ tag }}
-              <button type="button" class="remove-tag-btn" :aria-label="`移除標籤 ${tag}`" @click="removeTag(tag)">
-                ×
-              </button>
-            </span>
+
+          <div class="form-section">
+            <!-- zh-TW fields -->
+            <template v-if="activeTab === 'zh-TW'">
+              <div class="form-field">
+                <label for="name_zh">{{ $t("product.name") }}</label>
+                <input id="name_zh" v-model="form.name_zh" name="name_zh" type="text" />
+              </div>
+              <div class="form-field">
+                <label for="description_zh">{{ $t("product.description") }}</label>
+                <textarea id="description_zh" v-model="form.description_zh" name="description_zh" rows="4" />
+              </div>
+            </template>
+
+            <!-- en fields -->
+            <template v-if="activeTab === 'en'">
+              <div class="form-field">
+                <label for="name_en">{{ $t("product.name") }}</label>
+                <input id="name_en" v-model="form.name_en" name="name_en" type="text" />
+              </div>
+              <div class="form-field">
+                <label for="description_en">{{ $t("product.description") }}</label>
+                <textarea id="description_en" v-model="form.description_en" name="description_en" rows="4" />
+              </div>
+            </template>
+          </div>
+
+          <!-- Specs section -->
+          <div class="form-section">
+            <div class="form-field" :class="{ 'form-field--error': compositionError }">
+              <label for="composition">
+                {{ $t("product.composition") }}
+                <span class="required-badge">{{ $t("admin.required") }}</span>
+              </label>
+              <input id="composition" v-model="form.composition" name="composition" type="text" />
+              <span v-if="compositionError" class="field-error" role="alert">
+                {{ $t("admin.required") }}
+              </span>
+            </div>
+
+            <div class="form-grid">
+              <div class="form-field">
+                <label for="yarn_count">{{ $t("product.yarnCount") }}</label>
+                <input id="yarn_count" v-model="form.yarn_count" name="yarn_count" type="text" />
+              </div>
+              <div class="form-field">
+                <label for="density">{{ $t("product.density") }}</label>
+                <input id="density" v-model="form.density" name="density" type="text" />
+              </div>
+              <div class="form-field">
+                <label for="weight_gsm">{{ $t("product.weightGsm") }}</label>
+                <input id="weight_gsm" v-model="form.weight_gsm" name="weight_gsm" type="number" />
+              </div>
+              <div class="form-field">
+                <label for="width">{{ $t("product.width") }}</label>
+                <input id="width" v-model="form.width" name="width" type="text" />
+              </div>
+              <div class="form-field">
+                <label for="weave_structure">{{ $t("product.weaveStructure") }}</label>
+                <input id="weave_structure" v-model="form.weave_structure" name="weave_structure" type="text" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Tag management -->
+          <div class="form-section">
+            <div class="form-field">
+              <label>{{ $t("product.tags") }}</label>
+              <div class="tag-options">
+                <button
+                  v-for="tag in tagsStore.tags"
+                  :key="tag"
+                  type="button"
+                  class="tag-option"
+                  :class="{ 'tag-option--selected': form.tags.includes(tag) }"
+                  @click="form.tags.includes(tag) ? removeTag(tag) : addTag(tag)"
+                >
+                  {{ tag }}
+                </button>
+              </div>
+              <input
+                v-model="tagInput"
+                name="tag_input"
+                type="text"
+                :placeholder="'輸入新標籤後按 Enter'"
+                class="tag-input"
+                @keydown="handleTagKeydown"
+              />
+              <div v-if="form.tags.length" class="selected-tags">
+                <span
+                  v-for="tag in form.tags"
+                  :key="tag"
+                  class="selected-tag"
+                >
+                  {{ tag }}
+                  <button type="button" class="remove-tag-btn" :aria-label="`移除標籤 ${tag}`" @click="removeTag(tag)">
+                    ×
+                  </button>
+                </span>
+              </div>
+            </div>
           </div>
         </div>
       </div>
-
-      <!-- Image management (edit mode only) -->
-      <AdminImageUpload v-if="isEdit" :productId="route.params.id" />
 
       <!-- Form actions -->
       <div class="form-actions">
@@ -282,7 +295,47 @@ async function handleSubmit() {
 
 <style scoped>
 .admin-product-edit {
-  max-width: 800px;
+  max-width: 1100px;
+}
+
+.edit-layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+}
+
+@media (min-width: 1024px) {
+  .edit-layout {
+    grid-template-columns: 300px 1fr;
+    align-items: start;
+  }
+}
+
+.edit-layout__images {
+  /* images panel stays at top on mobile, left on desktop */
+}
+
+.edit-layout__fields {
+  min-width: 0;
+}
+
+.image-placeholder {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  padding: 2rem 1rem;
+  border: 2px dashed var(--color-border);
+  border-radius: var(--radius-md);
+  color: var(--color-text-secondary);
+  text-align: center;
+  min-height: 160px;
+}
+
+.image-placeholder p {
+  margin: 0;
+  font-size: var(--font-size-sm);
 }
 
 .admin-product-edit__header {

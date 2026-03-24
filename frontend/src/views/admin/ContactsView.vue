@@ -196,7 +196,7 @@ function typeLabel(type) {
         <h2>{{ editingId ? t("contacts.editContact") : t("contacts.addContact") }}</h2>
 
         <label>
-          {{ t("contacts.fields.name") }} *
+          {{ t("contacts.fields.name") }} <span class="required-badge">{{ t("admin.required") }}</span>
           <input v-model="form.name" type="text" required />
         </label>
         <label>
@@ -236,7 +236,7 @@ function typeLabel(type) {
 
         <!-- Email 輸入（僅在勾選 email 時顯示）-->
         <label v-if="form.contact_methods.includes('email')">
-          {{ t("contacts.fields.email") }} *
+          {{ t("contacts.fields.email") }} <span class="required-badge">{{ t("admin.required") }}</span>
           <input
             v-model="form.email"
             type="email"
@@ -266,3 +266,11 @@ function typeLabel(type) {
     </div>
   </div>
 </template>
+
+<style scoped>
+.required-badge {
+  color: #dc2626;
+  font-weight: 600;
+  font-size: 0.8125rem;
+}
+</style>

@@ -6,12 +6,21 @@
       "products": "Products",
       "contacts": "Contacts",
       "staffLogin": "Staff Login",
-      "banners": "Banner Management"
+      "banners": "Home Carousel",
+      "userMenu": "User Menu",
+      "adminCenter": "Admin Center",
+      "logout": "Logout",
+      "helpCenter": "Help Center"
+    },
+    "brand": {
+      "name": "Kady Textile Technology Co., Ltd."
     },
     "header": {
       "logout": "Logout",
       "toggleMenu": "Open menu",
-      "loggedInAs": "Logged in as"
+      "loggedInAs": "Logged in as",
+      "viewPublicSite": "View Public Site",
+      "userMenu": "User Menu"
     },
     "dashboard": {
       "title": "Admin Dashboard",

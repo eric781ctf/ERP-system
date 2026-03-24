@@ -38,7 +38,8 @@ function closeSidebar() {
 <style scoped>
 .admin-layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .admin-layout__overlay {
@@ -53,6 +54,8 @@ function closeSidebar() {
   min-width: 0;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+  height: 100%;
 }
 
 .admin-layout__content {

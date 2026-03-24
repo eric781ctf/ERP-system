@@ -45,7 +45,7 @@
     "uploadImage": "上傳圖片",
     "maxImages": "最多 6 張圖片",
     "dragToReorder": "拖曳或使用按鈕調整順序",
-    "required": "必填",
+    "required": "*必填",
     "optional": "選填",
     "saveSuccess": "儲存成功",
     "saveError": "儲存失敗，請稍後再試",
@@ -59,6 +59,7 @@
     "uploadError": "圖片上傳失敗",
     "fileTooLarge": "圖片大小不得超過 5MB",
     "invalidFormat": "僅接受 JPG 或 PNG 格式",
-    "maxImagesReached": "每個產品最多上傳 6 張圖片"
+    "maxImagesReached": "每個產品最多上傳 6 張圖片",
+    "imagePlaceholderHint": "儲存後即可上傳圖片"
   }
 }

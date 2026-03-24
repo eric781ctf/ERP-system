@@ -45,7 +45,7 @@
     "uploadImage": "Upload Image",
     "maxImages": "Up to 6 images",
     "dragToReorder": "Drag or use buttons to reorder",
-    "required": "Required",
+    "required": "*Required",
     "optional": "Optional",
     "saveSuccess": "Saved successfully",
     "saveError": "Save failed, please try again",
@@ -59,6 +59,7 @@
     "uploadError": "Image upload failed",
     "fileTooLarge": "Image must be under 5MB",
     "invalidFormat": "Only JPG or PNG formats are accepted",
-    "maxImagesReached": "Maximum 6 images per product"
+    "maxImagesReached": "Maximum 6 images per product",
+    "imagePlaceholderHint": "You can upload images after saving"
   }
 }

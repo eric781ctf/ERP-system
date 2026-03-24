@@ -1,0 +1,31 @@
+{
+  "helpCenter": {
+    "title": "Help Center",
+    "product": {
+      "title": "Product Management",
+      "steps": "1. Click \"Add Product\" and fill in the Traditional Chinese and English name, description, composition, and other details.\n2. Switch language tabs to enter content in both Traditional Chinese and English.\n3. Upload product images in the image section (max 6 images, JPG/PNG only, max 5MB each).\n4. Drag image thumbnails to reorder them.\n5. Click \"Save\" to finish. You will be redirected to the product list.",
+      "imageRule": "Each product supports up to 6 images. Traditional Chinese and English versions share the same image set.",
+      "faq": {
+        "q1": "Why does the image order differ after saving?",
+        "a1": "Image order is determined by the sort_order field. Make sure you save after reordering via drag-and-drop."
+      }
+    },
+    "banner": {
+      "title": "Home Carousel Management",
+      "steps": "1. Go to the \"Home Carousel\" page and click \"Add Carousel\".\n2. Upload an image (JPG/PNG, max 5MB) and fill in the alt text and title (optional).\n3. After saving, the banner will appear on the home page.\n4. Drag list items to reorder carousels, or use the toggle switch to show/hide them.\n5. Click \"Delete\" to permanently remove a carousel and its image.",
+      "faq": {
+        "q1": "What is the recommended image size for carousels?",
+        "a1": "We recommend using wide-format images at 1920×600px to ensure proper display across all screen sizes."
+      }
+    },
+    "contacts": {
+      "title": "Contact Management",
+      "steps": "1. Click \"Add Contact\" and fill in the name (required), phone, fax, tax ID, and other details.\n2. Select a contact type: Customer, Supplier, or Unclassified.\n3. Check the contact methods (phone, email, etc.) and fill in the corresponding information.\n4. Click \"Save\" to finish.\n5. Click \"Edit\" in the list to modify a contact, or \"Delete\" to remove it.",
+      "transactionNote": "Contacts are linked to transaction records. The merchant/customer field in transactions is selected from the contact list and cannot be entered as free text.",
+      "faq": {
+        "q1": "Will related transaction records be affected when a contact is deleted?",
+        "a1": "Transaction records will not be deleted, but the merchant/customer field will appear blank or as deleted. We recommend verifying there are no related transactions before deleting a contact."
+      }
+    }
+  }
+}

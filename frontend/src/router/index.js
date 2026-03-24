@@ -28,7 +28,7 @@ export const routes = [
   {
     path: "/admin",
     component: () => import("../views/layout/AdminLayout.vue"),
-    redirect: "/admin/dashboard",
+    redirect: "/admin/help-center",
     meta: { requiresAuth: true },
     children: [
       {
@@ -61,6 +61,11 @@ export const routes = [
         component: () => import("../views/admin/AdminBannerView.vue"),
         meta: { requiresAuth: true },
       },
+      {
+        path: "help-center",
+        component: () => import("../views/admin/HelpCenterView.vue"),
+        meta: { requiresAuth: true },
+      },
     ],
   },
 ];
@@ -80,7 +85,7 @@ router.beforeEach((to) => {
   }
 
   if (to.meta.requiresGuest && authStore.isLoggedIn) {
-    return { path: "/admin/dashboard" };
+    return { path: "/admin/help-center" };
   }
 });
 

@@ -1,6 +1,7 @@
 <script setup>
-import { ref, computed } from "vue";
+import { ref, computed, watch } from "vue";
 import { useI18n } from "vue-i18n";
+import { VueDraggable } from "vue-draggable-plus";
 import { useProductsStore } from "../stores/products.js";
 import { useToastStore } from "../stores/toast.js";
 import * as productsApi from "../api/products.js";
@@ -21,6 +22,10 @@ const images = computed(() => {
   if (!imgs) return [];
   return [...imgs].sort((a, b) => a.sort_order - b.sort_order);
 });
+
+// Local copy for drag-to-reorder
+const localImages = ref([]);
+watch(images, (val) => { localImages.value = [...val]; }, { immediate: true });
 
 function validateFile(file) {
   if (!["image/jpeg", "image/png"].includes(file.type)) {
@@ -80,16 +85,15 @@ async function onDrop(e) {
   if (file) await uploadFile(file);
 }
 
-async function handleReorder(direction, index) {
-  const sorted = [...images.value];
-  const swapIndex = direction === "up" ? index - 1 : index + 1;
-  [sorted[index], sorted[swapIndex]] = [sorted[swapIndex], sorted[index]];
-  const order = sorted.map((img) => img.id);
+async function onSortEnd() {
+  if (localImages.value.length <= 1) return;
+  const order = localImages.value.map((img) => img.id);
   try {
     await productsApi.reorderImages(props.productId, order);
     await productsStore.refreshCurrentProduct();
   } catch {
-    // silent
+    // revert
+    localImages.value = [...images.value];
   }
 }
 
@@ -111,34 +115,27 @@ async function handleDelete(imageId) {
     </div>
     <p class="image-upload__hint">{{ $t("admin.maxImages") }}</p>
 
-    <!-- Thumbnail grid -->
-    <div v-if="images.length > 0" class="image-upload__grid">
+    <!-- Draggable thumbnail grid -->
+    <VueDraggable
+      v-if="localImages.length > 0"
+      v-model="localImages"
+      class="image-upload__grid"
+      handle=".image-thumb__drag-handle"
+      animation="150"
+      ghost-class="image-thumb--ghost"
+      @end="onSortEnd"
+    >
       <div
-        v-for="(image, index) in images"
+        v-for="(image, index) in localImages"
         :key="image.id"
         class="image-thumb"
       >
+        <div class="image-thumb__drag-handle" :title="$t('admin.dragToReorder')" aria-hidden="true">
+          ⠿
+        </div>
         <img :src="image.url" :alt="`圖片 ${index + 1}`" />
 
         <div class="image-thumb__actions">
-          <button
-            v-if="index > 0"
-            type="button"
-            class="thumb-btn"
-            aria-label="上移"
-            @click="handleReorder('up', index)"
-          >
-            ↑
-          </button>
-          <button
-            v-if="index < images.length - 1"
-            type="button"
-            class="thumb-btn"
-            aria-label="下移"
-            @click="handleReorder('down', index)"
-          >
-            ↓
-          </button>
           <button
             type="button"
             class="thumb-btn thumb-btn--delete"
@@ -149,7 +146,7 @@ async function handleDelete(imageId) {
           </button>
         </div>
       </div>
-    </div>
+    </VueDraggable>
 
     <!-- Drop zone -->
     <label
@@ -221,6 +218,31 @@ async function handleDelete(imageId) {
   border-radius: var(--radius-base);
   overflow: hidden;
   border: 1px solid var(--color-border);
+  cursor: grab;
+}
+
+.image-thumb:active {
+  cursor: grabbing;
+}
+
+.image-thumb--ghost {
+  opacity: 0.4;
+  border: 2px dashed var(--color-cta);
+}
+
+.image-thumb__drag-handle {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  z-index: 2;
+  background: rgba(0, 0, 0, 0.45);
+  color: #fff;
+  border-radius: 3px;
+  font-size: 0.75rem;
+  padding: 1px 3px;
+  line-height: 1;
+  cursor: grab;
+  user-select: none;
 }
 
 .image-thumb img {

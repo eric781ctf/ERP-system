@@ -33,18 +33,22 @@ export const useAuthStore = defineStore("auth", () => {
     }
   }
 
+  function clearAuth() {
+    accessToken.value = "";
+    refreshToken.value = "";
+    username.value = "";
+    isActive.value = false;
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
+  }
+
   async function logout() {
     try {
       await authApi.logout();
     } catch {
       // Always clear local state even if API call fails (Req 3.5)
     } finally {
-      accessToken.value = "";
-      refreshToken.value = "";
-      username.value = "";
-      isActive.value = false;
-      localStorage.removeItem("access_token");
-      localStorage.removeItem("refresh_token");
+      clearAuth();
       window.location.replace("/login");
     }
   }
@@ -59,5 +63,6 @@ export const useAuthStore = defineStore("auth", () => {
     login,
     fetchMe,
     logout,
+    clearAuth,
   };
 });
