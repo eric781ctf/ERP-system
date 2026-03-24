@@ -3,6 +3,7 @@
     "nav": {
       "home": "Home",
       "catalog": "Product Catalog",
+      "aboutUs": "About Us",
       "products": "Products",
       "contacts": "Contacts",
       "staffLogin": "Staff Login",

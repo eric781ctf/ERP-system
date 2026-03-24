@@ -1,0 +1,24 @@
+{
+  "aboutUs": {
+    "page": {
+      "title": "About Us",
+      "companyIntro": "Company Introduction",
+      "brandStory": "Brand Story",
+      "contactInfo": "Contact Information",
+      "emptyPlaceholder": "(No information available yet)",
+      "loadingError": "Failed to load content. Please try again later."
+    },
+    "admin": {
+      "title": "About Us — Edit",
+      "tabZhTW": "繁體中文",
+      "tabEn": "English",
+      "companyIntro": "Company Introduction",
+      "brandStory": "Brand Story",
+      "contactInfo": "Contact Information",
+      "saveBtn": "Save",
+      "savingBtn": "Saving…",
+      "saveSuccess": "Saved successfully",
+      "saveError": "Save failed. Please try again later."
+    }
+  }
+}

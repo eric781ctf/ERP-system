@@ -18,6 +18,10 @@ export const routes = [
         path: "products/:id",
         component: () => import("../views/public/ProductDetailView.vue"),
       },
+      {
+        path: "about",
+        component: () => import("../views/public/AboutView.vue"),
+      },
     ],
   },
   {
@@ -62,8 +66,18 @@ export const routes = [
         meta: { requiresAuth: true },
       },
       {
+        path: "catalog-hero",
+        component: () => import("../views/admin/AdminCatalogHeroView.vue"),
+        meta: { requiresAuth: true },
+      },
+      {
         path: "help-center",
         component: () => import("../views/admin/HelpCenterView.vue"),
+        meta: { requiresAuth: true },
+      },
+      {
+        path: "about-us",
+        component: () => import("../views/admin/AdminAboutUsView.vue"),
         meta: { requiresAuth: true },
       },
     ],

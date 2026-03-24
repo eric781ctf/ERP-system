@@ -1,0 +1,24 @@
+{
+  "aboutUs": {
+    "page": {
+      "title": "關於我們",
+      "companyIntro": "公司簡介",
+      "brandStory": "品牌故事",
+      "contactInfo": "聯絡方式",
+      "emptyPlaceholder": "（尚未提供此資訊）",
+      "loadingError": "內容載入失敗，請稍後再試。"
+    },
+    "admin": {
+      "title": "關於我們 — 編輯",
+      "tabZhTW": "繁體中文",
+      "tabEn": "English",
+      "companyIntro": "公司簡介",
+      "brandStory": "品牌故事",
+      "contactInfo": "聯絡方式",
+      "saveBtn": "儲存",
+      "savingBtn": "儲存中…",
+      "saveSuccess": "儲存成功",
+      "saveError": "儲存失敗，請稍後再試。"
+    }
+  }
+}

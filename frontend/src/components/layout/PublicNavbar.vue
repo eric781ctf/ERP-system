@@ -9,6 +9,11 @@
             {{ t("layout.nav.catalog") }}
           </RouterLink>
         </li>
+        <li>
+          <RouterLink to="/about" class="public-navbar__link" active-class="public-navbar__link--active">
+            {{ t("layout.nav.aboutUs") }}
+          </RouterLink>
+        </li>
       </ul>
 
       <div class="public-navbar__right">

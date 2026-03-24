@@ -1,0 +1,15 @@
+{
+  "catalogHero": {
+    "admin": {
+      "pageTitle": "型錄首頁 Hero 文字管理",
+      "titleLabel": "標題",
+      "titlePlaceholder": "請輸入 Hero 標題",
+      "descriptionLabel": "描述文字",
+      "descriptionPlaceholder": "請輸入 Hero 描述文字",
+      "save": "儲存",
+      "saving": "儲存中...",
+      "saveSuccess": "儲存成功",
+      "saveError": "儲存失敗，請稍後再試"
+    }
+  }
+}

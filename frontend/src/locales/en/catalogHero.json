@@ -1,0 +1,15 @@
+{
+  "catalogHero": {
+    "admin": {
+      "pageTitle": "Catalog Hero Content Management",
+      "titleLabel": "Title",
+      "titlePlaceholder": "Enter hero title",
+      "descriptionLabel": "Description",
+      "descriptionPlaceholder": "Enter hero description",
+      "save": "Save",
+      "saving": "Saving...",
+      "saveSuccess": "Saved successfully",
+      "saveError": "Save failed, please try again"
+    }
+  }
+}

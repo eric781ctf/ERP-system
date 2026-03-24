@@ -1,28 +1,29 @@
 <script setup>
-import { useI18n } from "vue-i18n";
+import { onMounted } from "vue";
+import { useCatalogHeroStore } from "../stores/catalogHero.js";
 
-const { t } = useI18n();
+const store = useCatalogHeroStore();
 
-function scrollToProductList() {
-  const el = document.getElementById("product-list");
-  if (!el) return;
-  const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  el.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth" });
-}
+onMounted(() => {
+  store.fetchHero();
+});
 </script>
 
 <template>
   <section class="catalog-hero" aria-labelledby="catalog-hero-title">
     <div class="catalog-hero__content">
-      <h1 id="catalog-hero-title" class="catalog-hero__title">
-        {{ t("catalog.hero.title") }}
-      </h1>
-      <p class="catalog-hero__description">
-        {{ t("catalog.hero.description") }}
-      </p>
-      <button class="catalog-hero__cta" @click="scrollToProductList">
-        {{ t("catalog.hero.cta") }}
-      </button>
+      <template v-if="store.loading">
+        <div class="catalog-hero__skeleton catalog-hero__skeleton--title" aria-hidden="true" />
+        <div class="catalog-hero__skeleton catalog-hero__skeleton--description" aria-hidden="true" />
+      </template>
+      <template v-else>
+        <h1 id="catalog-hero-title" class="catalog-hero__title">
+          {{ store.heroTitle }}
+        </h1>
+        <p class="catalog-hero__description">
+          {{ store.heroDescription }}
+        </p>
+      </template>
     </div>
   </section>
 </template>
@@ -50,27 +51,31 @@ function scrollToProductList() {
 .catalog-hero__description {
   font-size: var(--font-size-lg);
   color: var(--color-text-secondary);
-  margin: 0 0 var(--space-8);
+  margin: 0;
   line-height: var(--line-height-base);
 }
 
-.catalog-hero__cta {
-  display: inline-block;
-  padding: 0.75rem 2rem;
-  background: var(--color-cta);
-  color: var(--color-text-primary);
-  border: none;
-  border-radius: var(--radius-base);
-  font-size: var(--font-size-base);
-  font-weight: 600;
-  cursor: pointer;
-  transition: background var(--transition-base), box-shadow var(--transition-base);
-  text-decoration: none;
+.catalog-hero__skeleton {
+  background: var(--color-background-warm, #f0ece6);
+  border-radius: var(--radius-base, 4px);
+  animation: skeleton-pulse 1.5s ease-in-out infinite;
+  margin: 0 auto;
 }
 
-.catalog-hero__cta:hover {
-  background: var(--color-cta-hover);
-  box-shadow: var(--shadow-card-hover);
+.catalog-hero__skeleton--title {
+  height: 2.5rem;
+  width: 60%;
+  margin-bottom: var(--space-4);
+}
+
+.catalog-hero__skeleton--description {
+  height: 1.25rem;
+  width: 80%;
+}
+
+@keyframes skeleton-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
 }
 
 @media (max-width: 768px) {
