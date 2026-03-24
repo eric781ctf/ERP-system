@@ -5,11 +5,6 @@
 
       <ul class="public-navbar__links">
         <li>
-          <RouterLink to="/" class="public-navbar__link" exact-active-class="public-navbar__link--active">
-            {{ t("layout.nav.home") }}
-          </RouterLink>
-        </li>
-        <li>
           <RouterLink to="/products" class="public-navbar__link" active-class="public-navbar__link--active">
             {{ t("layout.nav.catalog") }}
           </RouterLink>

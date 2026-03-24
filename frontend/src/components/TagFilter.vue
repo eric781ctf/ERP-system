@@ -11,7 +11,7 @@ const tagsStore = useTagsStore();
       :key="tag"
       :class="['tag-filter__btn', { active: tagsStore.selectedTags.includes(tag) }]"
       :aria-pressed="tagsStore.selectedTags.includes(tag)"
-      @click="tagsStore.selectTag(tag)"
+      @click="tagsStore.selectedTags.includes(tag) ? tagsStore.deselectTag(tag) : tagsStore.selectTag(tag)"
     >
       {{ tag }}
     </button>
