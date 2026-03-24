@@ -89,6 +89,9 @@ function handleNavClick() {
   color: #cbd5e1;
   text-decoration: none;
   font-size: 0.9375rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
   transition: background 0.15s ease-out, color 0.15s ease-out;
 }
 
