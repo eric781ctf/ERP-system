@@ -26,8 +26,8 @@ async function handleLogin() {
 
   try {
     await authStore.login(username.value.trim(), password.value);
-    const target = authStore.redirectPath || "/admin/products";
-    authStore.redirectPath = "/admin/products";
+    const target = authStore.redirectPath || "/admin/help-center";
+    authStore.redirectPath = "/admin/help-center";
     router.push(target);
   } catch (err) {
     if (err.response?.status === 401) {

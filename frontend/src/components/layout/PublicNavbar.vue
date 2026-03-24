@@ -62,7 +62,7 @@ const userMenuRef = ref(null);
 
 function goToAdmin() {
   isOpen.value = false;
-  router.push("/admin/dashboard");
+  router.push("/admin");
 }
 
 function handleLogout() {
