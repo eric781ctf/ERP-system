@@ -85,9 +85,9 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
 .public-navbar {
   position: sticky;
   top: 0;
-  background: #fff;
-  border-bottom: 1px solid #e2e8f0;
-  z-index: 10;
+  background: var(--color-surface);
+  border-bottom: 1px solid var(--color-border);
+  z-index: var(--z-navbar);
 }
 
 .public-navbar__inner {
@@ -103,17 +103,18 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
 .public-navbar__brand {
   font-weight: 700;
   font-size: 0.9375rem;
-  color: #0f172a;
+  color: var(--color-primary);
   letter-spacing: 0.02em;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 160px;
   text-decoration: none;
+  transition: color var(--transition-fast);
 }
 
 .public-navbar__brand:hover {
-  color: #0369a1;
+  color: var(--color-cta);
 }
 
 @media (min-width: 640px) {
@@ -142,12 +143,12 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
 .public-navbar__link {
   display: block;
   padding: 0.375rem 0.5rem;
-  color: #475569;
+  color: var(--color-text-secondary);
   text-decoration: none;
   font-size: 0.875rem;
   border-radius: 6px;
   white-space: nowrap;
-  transition: color 0.15s ease-out, background 0.15s ease-out;
+  transition: color var(--transition-fast), background var(--transition-fast);
 }
 
 @media (min-width: 640px) {
@@ -168,12 +169,14 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
 }
 
 .public-navbar__link:hover {
-  color: #0f172a;
-  background: #f1f5f9;
+  color: var(--color-primary);
+  background: var(--color-background-warm);
+  text-decoration: underline;
+  text-decoration-color: var(--color-cta);
 }
 
 .public-navbar__link--active {
-  color: #0369a1;
+  color: var(--color-cta);
   font-weight: 600;
 }
 
@@ -187,19 +190,19 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
 
 .public-navbar__staff-login {
   padding: 0.35rem 0.625rem;
-  border: 1px solid #0369a1;
+  border: 1px solid var(--color-cta);
   border-radius: 6px;
-  color: #0369a1;
+  color: var(--color-cta);
   text-decoration: none;
   font-size: 0.8125rem;
   font-weight: 500;
   white-space: nowrap;
-  transition: background 0.15s ease-out, color 0.15s ease-out;
+  transition: background var(--transition-fast), color var(--transition-fast);
 }
 
 .public-navbar__staff-login:hover {
-  background: #0369a1;
-  color: #fff;
+  background: var(--color-cta);
+  color: var(--color-text-primary);
 }
 
 @media (min-width: 640px) {
@@ -221,26 +224,26 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
   background: none;
   border: none;
   cursor: pointer;
-  color: #475569;
+  color: var(--color-text-secondary);
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0.25rem;
   border-radius: 50%;
-  transition: color 0.15s ease-out, background 0.15s ease-out;
+  transition: color var(--transition-fast), background var(--transition-fast);
 }
 
 .public-navbar__avatar-btn:hover {
-  color: #0f172a;
-  background: #f1f5f9;
+  color: var(--color-primary);
+  background: var(--color-background-warm);
 }
 
 .public-navbar__dropdown {
   position: absolute;
   top: calc(100% + 8px);
   right: 0;
-  background: #fff;
-  border: 1px solid #e2e8f0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
   border-radius: 8px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   min-width: 160px;
@@ -256,13 +259,13 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
   border: none;
   text-align: left;
   font-size: 0.875rem;
-  color: #334155;
+  color: var(--color-text-secondary);
   cursor: pointer;
-  transition: background 0.15s ease-out;
+  transition: background var(--transition-fast);
 }
 
 .public-navbar__dropdown-item:hover {
-  background: #f8fafc;
+  background: var(--color-background-warm);
 }
 
 .public-navbar__dropdown-item--danger {

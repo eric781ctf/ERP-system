@@ -57,12 +57,11 @@ const displayName = computed(() => {
   background: var(--color-surface);
   overflow: hidden;
   border: 1px solid var(--color-border);
-  transition: transform var(--transition-slow), box-shadow var(--transition-slow);
+  transition: box-shadow var(--transition-base);
   cursor: pointer;
 }
 
 .product-card:hover {
-  transform: translateY(-4px);
   box-shadow: var(--shadow-card-hover);
 }
 

@@ -11,8 +11,23 @@
     "filterByTag": "依標籤篩選",
     "allProducts": "全部產品",
     "noProducts": "目前沒有符合條件的產品",
+    "emptyFiltered": "目前沒有符合篩選條件的產品",
     "composition": "成份",
-    "viewDetail": "查看詳情"
+    "viewDetail": "查看詳情",
+    "hero": {
+      "title": "探索優質布料與紡織品",
+      "description": "專業布料供應，提供多元材質、豐富組織結構，滿足您的紡織製造需求。",
+      "cta": "瀏覽全部產品"
+    },
+    "filter": {
+      "title": "篩選條件",
+      "category": "產品分類",
+      "composition": "成份／材質",
+      "weaveStructure": "組織結構",
+      "clearAll": "清除篩選",
+      "openDrawer": "開啟篩選",
+      "closeDrawer": "關閉篩選"
+    }
   },
   "product": {
     "name": "產品名稱",

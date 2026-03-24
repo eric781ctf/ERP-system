@@ -62,6 +62,7 @@ onMounted(() => {
 .language-switcher button.active {
   font-weight: 600;
   opacity: 1;
-  border-bottom: 2px solid var(--color-cta);
+  color: var(--color-secondary);
+  border-bottom: 2px solid var(--color-secondary);
 }
 </style>

@@ -11,8 +11,23 @@
     "filterByTag": "Filter by Tag",
     "allProducts": "All Products",
     "noProducts": "No products found",
+    "emptyFiltered": "No products match the current filters",
     "composition": "Composition",
-    "viewDetail": "View Details"
+    "viewDetail": "View Details",
+    "hero": {
+      "title": "Explore Premium Fabrics & Textiles",
+      "description": "Professional fabric supply with diverse materials and weave structures to meet your textile manufacturing needs.",
+      "cta": "Browse All Products"
+    },
+    "filter": {
+      "title": "Filters",
+      "category": "Category",
+      "composition": "Composition / Material",
+      "weaveStructure": "Weave Structure",
+      "clearAll": "Clear Filters",
+      "openDrawer": "Open Filters",
+      "closeDrawer": "Close Filters"
+    }
   },
   "product": {
     "name": "Product Name",
