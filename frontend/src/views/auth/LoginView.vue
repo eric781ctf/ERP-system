@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { useRouter, RouterLink } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useAuthStore } from "../../stores/auth.js";
 
@@ -45,6 +45,9 @@ async function handleLogin() {
 
 <template>
   <div class="login-page">
+    <div class="login-topbar">
+      <RouterLink to="/" class="login-brand">{{ t("layout.brand.name") }}</RouterLink>
+    </div>
     <div class="login-card">
       <h1 class="login-title">{{ t("auth.login.title") }}</h1>
 
@@ -121,6 +124,26 @@ async function handleLogin() {
   align-items: center;
   justify-content: center;
   background: var(--color-bg, #f8fafc);
+  position: relative;
+}
+
+.login-topbar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  padding: 1rem 1.5rem;
+}
+
+.login-brand {
+  font-weight: 700;
+  font-size: 0.9375rem;
+  color: #0f172a;
+  text-decoration: none;
+  letter-spacing: 0.02em;
+}
+
+.login-brand:hover {
+  color: #0369a1;
 }
 
 .login-card {

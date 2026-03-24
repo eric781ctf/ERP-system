@@ -1,7 +1,7 @@
 <template>
   <nav class="public-navbar" aria-label="主導覽列">
     <div class="public-navbar__inner">
-      <div class="public-navbar__brand">{{ t("layout.brand.name") }}</div>
+      <RouterLink to="/" class="public-navbar__brand">{{ t("layout.brand.name") }}</RouterLink>
 
       <ul class="public-navbar__links">
         <li>
@@ -114,6 +114,11 @@ onUnmounted(() => document.removeEventListener("click", handleClickOutside));
   text-overflow: ellipsis;
   white-space: nowrap;
   max-width: 160px;
+  text-decoration: none;
+}
+
+.public-navbar__brand:hover {
+  color: #0369a1;
 }
 
 @media (min-width: 640px) {
