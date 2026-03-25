@@ -199,10 +199,14 @@ function typeLabel(type) {
               {{ t("contacts.fields.phone") }}
               <span class="sort-icon" aria-hidden="true">{{ sortIcon("phone") }}</span>
             </th>
+            <th class="col-fax">{{ t("contacts.fields.fax") }}</th>
+            <th class="col-email">{{ t("contacts.fields.email") }}</th>
+            <th class="col-taxid">{{ t("contacts.fields.tax_id") }}</th>
             <th class="col-type" @click="toggleSort('type')" style="cursor:pointer">
               {{ t("contacts.fields.type") }}
               <span class="sort-icon" aria-hidden="true">{{ sortIcon("type") }}</span>
             </th>
+            <th class="col-note">{{ t("contacts.fields.note") }}</th>
             <th class="col-actions"></th>
           </tr>
         </thead>
@@ -213,13 +217,17 @@ function typeLabel(type) {
               <td><span class="skeleton-cell"></span></td>
               <td><span class="skeleton-cell"></span></td>
               <td><span class="skeleton-cell"></span></td>
+              <td><span class="skeleton-cell"></span></td>
+              <td><span class="skeleton-cell"></span></td>
+              <td><span class="skeleton-cell"></span></td>
+              <td><span class="skeleton-cell"></span></td>
               <td><span class="skeleton-cell skeleton-cell--sm"></span></td>
             </tr>
           </template>
 
           <!-- 空狀態 -->
           <tr v-else-if="sortedContacts.length === 0">
-            <td colspan="4" class="empty-state" data-testid="empty-state">
+            <td colspan="8" class="empty-state" data-testid="empty-state">
               {{ t("contacts.table.empty") }}
             </td>
           </tr>
@@ -228,8 +236,12 @@ function typeLabel(type) {
           <template v-else>
             <tr v-for="contact in sortedContacts" :key="contact.id">
               <td>{{ contact.name }}</td>
-              <td>{{ contact.phone }}</td>
+              <td>{{ contact.phone || '—' }}</td>
+              <td>{{ contact.fax || '—' }}</td>
+              <td>{{ contact.email || '—' }}</td>
+              <td>{{ contact.tax_id || '—' }}</td>
               <td>{{ typeLabel(contact.type) }}</td>
+              <td class="note-cell">{{ contact.note || '—' }}</td>
               <td class="actions-cell">
                 <button @click="openEdit(contact)">{{ t("contacts.editContact") }}</button>
                 <button @click="requestDelete(contact.id)">{{ t("contacts.actions.delete") }}</button>
@@ -360,10 +372,21 @@ function typeLabel(type) {
 }
 
 /* Column widths */
-.col-name    { width: 30%; }
-.col-phone   { width: 25%; }
-.col-type    { width: 20%; }
-.col-actions { width: 25%; }
+.col-name    { min-width: 100px; }
+.col-phone   { min-width: 90px; }
+.col-fax     { min-width: 90px; }
+.col-email   { min-width: 120px; }
+.col-taxid   { min-width: 80px; }
+.col-type    { min-width: 70px; }
+.col-note    { min-width: 100px; }
+.col-actions { min-width: 120px; }
+
+.note-cell {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
 .sort-icon {
   margin-left: 0.25rem;

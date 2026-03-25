@@ -34,9 +34,27 @@
         <!-- 聯絡方式 -->
         <section class="about-view__section">
           <h2 class="about-view__section-title">{{ t("aboutUs.page.contactInfo") }}</h2>
-          <p class="about-view__section-body">
-            {{ contactInfo || t("aboutUs.page.emptyPlaceholder") }}
-          </p>
+          <dl class="about-view__contact-list">
+            <template v-if="contactData.fax">
+              <dt>{{ t("aboutUs.page.fax") }}</dt>
+              <dd>{{ contactData.fax }}</dd>
+            </template>
+            <template v-if="contactData.address">
+              <dt>{{ t("aboutUs.page.address") }}</dt>
+              <dd>{{ contactData.address }}</dd>
+            </template>
+            <template v-if="contactData.businessHours">
+              <dt>{{ t("aboutUs.page.businessHours") }}</dt>
+              <dd>{{ contactData.businessHours }}</dd>
+            </template>
+            <template v-if="contactData.email">
+              <dt>{{ t("aboutUs.page.email") }}</dt>
+              <dd>{{ contactData.email }}</dd>
+            </template>
+            <template v-if="!contactData.fax && !contactData.address && !contactData.businessHours && !contactData.email">
+              <dd>{{ t("aboutUs.page.emptyPlaceholder") }}</dd>
+            </template>
+          </dl>
         </section>
       </template>
     </div>
@@ -63,10 +81,16 @@ const brandStory = computed(() => {
   return locale.value === "zh-TW" ? d.brand_story_zh : d.brand_story_en;
 });
 
-const contactInfo = computed(() => {
+const contactData = computed(() => {
   const d = aboutUsStore.aboutUs;
-  if (!d) return "";
-  return locale.value === "zh-TW" ? d.contact_info_zh : d.contact_info_en;
+  if (!d) return {};
+  const isZh = locale.value === "zh-TW";
+  return {
+    fax: d.fax || "",
+    address: isZh ? (d.address_zh || "") : (d.address_en || ""),
+    businessHours: isZh ? (d.business_hours_zh || "") : (d.business_hours_en || ""),
+    email: d.email || "",
+  };
 });
 
 onMounted(() => {
@@ -139,6 +163,24 @@ onMounted(() => {
   color: var(--color-text-secondary);
   line-height: 1.8;
   white-space: pre-wrap;
+}
+
+.about-view__contact-list {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 0.5rem 1.25rem;
+  font-size: 0.9375rem;
+  color: var(--color-text-secondary);
+}
+
+.about-view__contact-list dt {
+  font-weight: 600;
+  color: var(--color-primary);
+  white-space: nowrap;
+}
+
+.about-view__contact-list dd {
+  margin: 0;
 }
 
 @media (min-width: 768px) {

@@ -13,8 +13,12 @@ const form = ref({
   company_intro_en: "",
   brand_story_zh: "",
   brand_story_en: "",
-  contact_info_zh: "",
-  contact_info_en: "",
+  fax: "",
+  address_zh: "",
+  address_en: "",
+  business_hours_zh: "",
+  business_hours_en: "",
+  email: "",
 });
 
 const successMessage = ref("");
@@ -32,8 +36,12 @@ watch(
       form.value.company_intro_en = data.company_intro_en ?? "";
       form.value.brand_story_zh = data.brand_story_zh ?? "";
       form.value.brand_story_en = data.brand_story_en ?? "";
-      form.value.contact_info_zh = data.contact_info_zh ?? "";
-      form.value.contact_info_en = data.contact_info_en ?? "";
+      form.value.fax = data.fax ?? "";
+      form.value.address_zh = data.address_zh ?? "";
+      form.value.address_en = data.address_en ?? "";
+      form.value.business_hours_zh = data.business_hours_zh ?? "";
+      form.value.business_hours_en = data.business_hours_en ?? "";
+      form.value.email = data.email ?? "";
     }
   },
   { immediate: true }
@@ -116,17 +124,23 @@ async function handleSave() {
           />
         </div>
 
+        <!-- 聯絡方式固定欄位（中文版） -->
+        <div class="about-us-admin__section-title">{{ t("aboutUs.admin.contactInfo") }}</div>
         <div class="about-us-admin__field">
-          <label class="about-us-admin__label" for="contact-info-zh">
-            {{ t("aboutUs.admin.contactInfo") }}
-          </label>
-          <textarea
-            id="contact-info-zh"
-            v-model="form.contact_info_zh"
-            class="about-us-admin__textarea"
-            :disabled="aboutUsStore.saving"
-            rows="3"
-          />
+          <label class="about-us-admin__label" for="fax-zh">{{ t("aboutUs.admin.fax") }}</label>
+          <input id="fax-zh" v-model="form.fax" type="text" class="about-us-admin__input" :disabled="aboutUsStore.saving" />
+        </div>
+        <div class="about-us-admin__field">
+          <label class="about-us-admin__label" for="address-zh">{{ t("aboutUs.admin.address") }}</label>
+          <input id="address-zh" v-model="form.address_zh" type="text" class="about-us-admin__input" :disabled="aboutUsStore.saving" />
+        </div>
+        <div class="about-us-admin__field">
+          <label class="about-us-admin__label" for="hours-zh">{{ t("aboutUs.admin.businessHours") }}</label>
+          <input id="hours-zh" v-model="form.business_hours_zh" type="text" class="about-us-admin__input" :disabled="aboutUsStore.saving" />
+        </div>
+        <div class="about-us-admin__field">
+          <label class="about-us-admin__label" for="email-field">{{ t("aboutUs.admin.email") }}</label>
+          <input id="email-field" v-model="form.email" type="email" class="about-us-admin__input" :disabled="aboutUsStore.saving" />
         </div>
       </template>
 
@@ -158,17 +172,23 @@ async function handleSave() {
           />
         </div>
 
+        <!-- 聯絡方式固定欄位（英文版） -->
+        <div class="about-us-admin__section-title">{{ t("aboutUs.admin.contactInfo") }}</div>
         <div class="about-us-admin__field">
-          <label class="about-us-admin__label" for="contact-info-en">
-            {{ t("aboutUs.admin.contactInfo") }}
-          </label>
-          <textarea
-            id="contact-info-en"
-            v-model="form.contact_info_en"
-            class="about-us-admin__textarea"
-            :disabled="aboutUsStore.saving"
-            rows="3"
-          />
+          <label class="about-us-admin__label" for="fax-en">{{ t("aboutUs.admin.fax") }}</label>
+          <input id="fax-en" v-model="form.fax" type="text" class="about-us-admin__input" :disabled="aboutUsStore.saving" />
+        </div>
+        <div class="about-us-admin__field">
+          <label class="about-us-admin__label" for="address-en">{{ t("aboutUs.admin.address") }}</label>
+          <input id="address-en" v-model="form.address_en" type="text" class="about-us-admin__input" :disabled="aboutUsStore.saving" />
+        </div>
+        <div class="about-us-admin__field">
+          <label class="about-us-admin__label" for="hours-en">{{ t("aboutUs.admin.businessHours") }}</label>
+          <input id="hours-en" v-model="form.business_hours_en" type="text" class="about-us-admin__input" :disabled="aboutUsStore.saving" />
+        </div>
+        <div class="about-us-admin__field">
+          <label class="about-us-admin__label" for="email-en">{{ t("aboutUs.admin.email") }}</label>
+          <input id="email-en" v-model="form.email" type="email" class="about-us-admin__input" :disabled="aboutUsStore.saving" />
         </div>
       </template>
 
@@ -317,6 +337,37 @@ async function handleSave() {
   background: #fee2e2;
   color: #991b1b;
   border: 1px solid #fca5a5;
+}
+
+.about-us-admin__section-title {
+  font-size: var(--font-size-base, 1rem);
+  font-weight: 700;
+  color: var(--color-primary);
+  border-bottom: 1px solid var(--color-border, #e5e7eb);
+  padding-bottom: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+.about-us-admin__input {
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border, #d1d5db);
+  border-radius: var(--radius-base, 4px);
+  font-size: var(--font-size-base, 1rem);
+  color: var(--color-text-primary);
+  background: var(--color-background);
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color var(--transition-base);
+}
+
+.about-us-admin__input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}
+
+.about-us-admin__input:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
 .about-us-admin__actions {

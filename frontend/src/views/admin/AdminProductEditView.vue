@@ -32,6 +32,7 @@ const form = reactive({
   tags: [],
 });
 
+const nameZhError = ref(false);
 const compositionError = ref(false);
 const updatedAt = ref(null);
 const tagInput = ref("");
@@ -83,7 +84,13 @@ function handleTagKeydown(e) {
 }
 
 async function handleSubmit() {
+  nameZhError.value = false;
   compositionError.value = false;
+
+  if (!form.name_zh.trim()) {
+    nameZhError.value = true;
+    return;
+  }
 
   if (!form.composition.trim()) {
     compositionError.value = true;
@@ -175,8 +182,16 @@ async function handleSubmit() {
             <!-- zh-TW fields -->
             <template v-if="activeTab === 'zh-TW'">
               <div class="form-field">
-                <label for="name_zh">{{ $t("product.name") }}</label>
-                <input id="name_zh" v-model="form.name_zh" name="name_zh" type="text" />
+                <label for="name_zh">{{ $t("product.name") }} <span class="required-star">*</span></label>
+                <input
+                  id="name_zh"
+                  v-model="form.name_zh"
+                  name="name_zh"
+                  type="text"
+                  :class="{ 'input-error': nameZhError }"
+                  @input="nameZhError = false"
+                />
+                <span v-if="nameZhError" class="field-error-msg">{{ $t("admin.required") }}</span>
               </div>
               <div class="form-field">
                 <label for="description_zh">{{ $t("product.description") }}</label>
@@ -439,6 +454,20 @@ async function handleSubmit() {
 
 .form-field--error input:focus {
   box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.12);
+}
+
+.required-star {
+  color: var(--color-danger);
+  font-weight: 700;
+}
+
+.input-error {
+  border-color: var(--color-danger) !important;
+}
+
+.field-error-msg {
+  font-size: var(--font-size-xs);
+  color: var(--color-danger);
 }
 
 .field-error {

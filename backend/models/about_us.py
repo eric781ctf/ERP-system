@@ -12,6 +12,12 @@ class AboutUs(db.Model):
     brand_story_en = db.Column(db.Text, nullable=True)
     contact_info_zh = db.Column(db.String(500), nullable=True)
     contact_info_en = db.Column(db.String(500), nullable=True)
+    fax = db.Column(db.String(100), nullable=True)
+    address_zh = db.Column(db.String(500), nullable=True)
+    address_en = db.Column(db.String(500), nullable=True)
+    business_hours_zh = db.Column(db.String(200), nullable=True)
+    business_hours_en = db.Column(db.String(200), nullable=True)
+    email = db.Column(db.String(200), nullable=True)
     updated_at = db.Column(
         db.DateTime,
         nullable=False,
