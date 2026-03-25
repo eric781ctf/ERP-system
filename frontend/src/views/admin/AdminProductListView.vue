@@ -105,27 +105,29 @@ async function confirmDelete() {
                 {{ product.is_published ? $t("admin.published") : $t("admin.draft") }}
               </span>
             </td>
-            <td class="actions-cell">
-              <button
-                class="btn-sm btn-outline"
-                @click="handleTogglePublish(product)"
-              >
-                {{ product.is_published ? $t("admin.unpublish") : $t("admin.publish") }}
-              </button>
-              <button
-                class="btn-sm btn-edit"
-                :aria-label="`${$t('admin.editProduct')} ${product.name_zh}`"
-                @click="router.push(`/admin/products/${product.id}/edit`)"
-              >
-                {{ $t("admin.editProduct") }}
-              </button>
-              <button
-                class="btn-sm btn-danger"
-                :aria-label="`${$t('admin.delete')} ${product.name_zh}`"
-                @click="requestDelete(product)"
-              >
-                {{ $t("admin.delete") }}
-              </button>
+            <td>
+              <div class="actions-cell">
+                <button
+                  class="btn-sm btn-outline"
+                  @click="handleTogglePublish(product)"
+                >
+                  {{ product.is_published ? $t("admin.unpublish") : $t("admin.publish") }}
+                </button>
+                <button
+                  class="btn-sm btn-edit"
+                  :aria-label="`${$t('admin.editProduct')} ${product.name_zh}`"
+                  @click="router.push(`/admin/products/${product.id}/edit`)"
+                >
+                  {{ $t("admin.editProduct") }}
+                </button>
+                <button
+                  class="btn-sm btn-danger"
+                  :aria-label="`${$t('admin.delete')} ${product.name_zh}`"
+                  @click="requestDelete(product)"
+                >
+                  {{ $t("admin.delete") }}
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>

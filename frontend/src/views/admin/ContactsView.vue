@@ -242,9 +242,11 @@ function typeLabel(type) {
               <td>{{ contact.tax_id || '—' }}</td>
               <td>{{ typeLabel(contact.type) }}</td>
               <td class="note-cell">{{ contact.note || '—' }}</td>
-              <td class="actions-cell">
-                <button @click="openEdit(contact)">{{ t("contacts.editContact") }}</button>
-                <button @click="requestDelete(contact.id)">{{ t("contacts.actions.delete") }}</button>
+              <td>
+                <div class="actions-cell">
+                  <button @click="openEdit(contact)">{{ t("contacts.editContact") }}</button>
+                  <button @click="requestDelete(contact.id)">{{ t("contacts.actions.delete") }}</button>
+                </div>
               </td>
             </tr>
           </template>
