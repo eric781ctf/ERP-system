@@ -40,6 +40,8 @@ const navItems = [
   { label: "layout.nav.products", to: "/admin/products" },
   { label: "layout.nav.contacts", to: "/admin/contacts" },
   { label: "layout.nav.banners", to: "/admin/banners" },
+  { label: "layout.nav.catalogHero", to: "/admin/catalog-hero" },
+  { label: "layout.nav.aboutUs", to: "/admin/about-us" },
 ];
 
 function isActive(path) {
