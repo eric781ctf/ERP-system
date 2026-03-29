@@ -6,6 +6,7 @@ import { useProductsStore } from "../../stores/products.js";
 import { useTagsStore } from "../../stores/tags.js";
 import { useToastStore } from "../../stores/toast.js";
 import AdminImageUpload from "../../components/AdminImageUpload.vue";
+import RichContentEditor from "../../components/RichContentEditor.vue";
 
 const { t } = useI18n();
 const route = useRoute();
@@ -21,8 +22,10 @@ const saving = ref(false);
 const form = reactive({
   name_zh: "",
   name_en: "",
-  description_zh: "",
-  description_en: "",
+  summary_zh: "",
+  summary_en: "",
+  content_zh: "",
+  content_en: "",
   composition: "",
   yarn_count: "",
   density: "",
@@ -45,8 +48,10 @@ onMounted(async () => {
     if (p) {
       form.name_zh = p.name_zh || "";
       form.name_en = p.name_en || "";
-      form.description_zh = p.description_zh || "";
-      form.description_en = p.description_en || "";
+      form.summary_zh = p.summary_zh || "";
+      form.summary_en = p.summary_en || "";
+      form.content_zh = p.content_zh || "";
+      form.content_en = p.content_en || "";
       form.composition = p.composition || "";
       form.yarn_count = p.yarn_count || "";
       form.density = p.density || "";
@@ -100,8 +105,10 @@ async function handleSubmit() {
   const payload = {
     name_zh: form.name_zh,
     name_en: form.name_en,
-    description_zh: form.description_zh,
-    description_en: form.description_en,
+    summary_zh: form.summary_zh,
+    summary_en: form.summary_en,
+    content_zh: form.content_zh,
+    content_en: form.content_en,
     composition: form.composition,
     yarn_count: form.yarn_count,
     density: form.density,
@@ -194,8 +201,18 @@ async function handleSubmit() {
                 <span v-if="nameZhError" class="field-error-msg">{{ $t("admin.required") }}</span>
               </div>
               <div class="form-field">
-                <label for="description_zh">{{ $t("product.description") }}</label>
-                <textarea id="description_zh" v-model="form.description_zh" name="description_zh" rows="4" />
+                <label for="summary_zh">{{ $t("product.summary") }}</label>
+                <textarea id="summary_zh" v-model="form.summary_zh" name="summary_zh" rows="3" />
+              </div>
+              <div class="form-field">
+                <label>{{ $t("product.content") }}</label>
+                <RichContentEditor
+                  v-if="isEdit"
+                  v-model:content="form.content_zh"
+                  :productId="route.params.id"
+                  :placeholder="$t('product.editorPlaceholder')"
+                />
+                <p v-else class="editor-hint">{{ $t("admin.imagePlaceholderHint") }}</p>
               </div>
             </template>
 
@@ -206,8 +223,18 @@ async function handleSubmit() {
                 <input id="name_en" v-model="form.name_en" name="name_en" type="text" />
               </div>
               <div class="form-field">
-                <label for="description_en">{{ $t("product.description") }}</label>
-                <textarea id="description_en" v-model="form.description_en" name="description_en" rows="4" />
+                <label for="summary_en">{{ $t("product.summary") }}</label>
+                <textarea id="summary_en" v-model="form.summary_en" name="summary_en" rows="3" />
+              </div>
+              <div class="form-field">
+                <label>{{ $t("product.content") }}</label>
+                <RichContentEditor
+                  v-if="isEdit"
+                  v-model:content="form.content_en"
+                  :productId="route.params.id"
+                  :placeholder="$t('product.editorPlaceholder')"
+                />
+                <p v-else class="editor-hint">{{ $t("admin.imagePlaceholderHint") }}</p>
               </div>
             </template>
           </div>
@@ -607,5 +634,14 @@ async function handleSubmit() {
 
 .btn-cancel:hover {
   background: var(--color-border);
+}
+
+.editor-hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  margin: 0;
+  padding: 0.75rem;
+  border: 1px dashed var(--color-border);
+  border-radius: var(--radius-base);
 }
 </style>

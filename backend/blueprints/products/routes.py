@@ -9,6 +9,8 @@ from schemas.product_schema import (
     UpdateProductSchema,
     ProductSummarySchema,
     ProductDetailSchema,
+    sanitize_content,
+    _MAX_CONTENT_LEN,
 )
 from schemas.image_schema import ProductImageSchema
 from . import bp
@@ -114,6 +116,13 @@ def update_product(product_id):
         data = _update_schema.load(request.get_json(force=True) or {})
     except ValidationError as e:
         return err(str(e.messages), 400)
+
+    # Sanitize rich content fields
+    for content_field in ("content_zh", "content_en"):
+        if content_field in data and data[content_field] is not None:
+            if len(data[content_field]) > _MAX_CONTENT_LEN:
+                return err(f"{content_field} 內容超過長度上限（500,000 字元）", 400)
+            data[content_field] = sanitize_content(data[content_field])
 
     tags = _resolve_tags(data.pop("tags", []))
     for key, value in data.items():
@@ -283,3 +292,31 @@ def reorder_images(product_id):
         .all()
     )
     return ok(data=_image_schema.dump(updated, many=True))
+
+
+# ── Rich-content image upload ─────────────────────────────────────────────────
+
+@bp.route("/<int:product_id>/content-images", methods=["POST"])
+@jwt_required()
+def upload_content_image(product_id):
+    p = _get_or_404(product_id)
+    if p is None:
+        return err("找不到該產品", 404)
+
+    if "image" not in request.files:
+        return err("請上傳圖片檔案（欄位名稱：image）", 400)
+
+    file = request.files["image"]
+    file_bytes = file.read()
+    filename = file.filename or "upload.jpg"
+
+    from services.s3_service import S3UploadService, ValidationError as S3Error
+    try:
+        url = S3UploadService().upload_content_image(file_bytes, filename, product_id)
+    except S3Error as e:
+        return err(str(e), 400)
+    except Exception as e:
+        current_app.logger.error("content image S3 upload failed: %s", e)
+        return err("圖片上傳失敗，請稍後再試", 500)
+
+    return ok(data={"url": url}, message="圖片上傳成功", status=201)

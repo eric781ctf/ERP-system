@@ -33,6 +33,9 @@
   "product": {
     "name": "Product Name",
     "description": "Description",
+    "summary": "Summary",
+    "content": "Content",
+    "editorPlaceholder": "Enter detailed product description here...",
     "composition": "Composition",
     "yarnCount": "Yarn Count (D)",
     "density": "Thread Density",

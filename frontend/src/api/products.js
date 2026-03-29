@@ -36,3 +36,13 @@ export const reorderImages = (productId, order) =>
   http
     .patch(`${BASE}/${productId}/images/reorder`, { order })
     .then((r) => r.data);
+
+export const uploadContentImage = (productId, file) => {
+  const formData = new FormData();
+  formData.append("image", file);
+  return http
+    .post(`${BASE}/${productId}/content-images`, formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    })
+    .then((r) => r.data);
+};

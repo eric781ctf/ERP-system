@@ -24,10 +24,16 @@ const displayName = computed(() => {
   return product.value.name_zh;
 });
 
-const displayDescription = computed(() => {
+const displaySummary = computed(() => {
   if (!product.value) return "";
-  if (locale.value === "en" && product.value.description_en) return product.value.description_en;
-  return product.value.description_zh;
+  if (locale.value === "en" && product.value.summary_en) return product.value.summary_en;
+  return product.value.summary_zh || "";
+});
+
+const displayContent = computed(() => {
+  if (!product.value) return "";
+  if (locale.value === "en" && product.value.content_en) return product.value.content_en;
+  return product.value.content_zh || "";
 });
 
 const specs = computed(() => {
@@ -71,9 +77,6 @@ const specs = computed(() => {
 
         <div class="product-detail__info">
           <h1 class="product-detail__name">{{ displayName }}</h1>
-          <p v-if="displayDescription" class="product-detail__desc">
-            {{ displayDescription }}
-          </p>
 
           <dl v-if="specs.length" class="product-detail__specs">
             <template v-for="spec in specs" :key="spec.key">
@@ -82,6 +85,10 @@ const specs = computed(() => {
             </template>
           </dl>
 
+          <p v-if="displaySummary" class="product-detail__summary">
+            {{ displaySummary }}
+          </p>
+
           <div v-if="product.tags?.length" class="product-detail__tags">
             <span v-for="tag in product.tags" :key="tag" class="tag-badge">
               {{ tag }}
@@ -89,6 +96,13 @@ const specs = computed(() => {
           </div>
         </div>
       </div>
+
+      <!-- Rich text content below the two-column area -->
+      <div
+        v-if="displayContent"
+        class="product-detail__content prose"
+        v-html="displayContent"
+      />
     </div>
   </div>
 </template>
@@ -162,10 +176,10 @@ const specs = computed(() => {
   margin: 0 0 0.75rem;
 }
 
-.product-detail__desc {
+.product-detail__summary {
   color: var(--color-text-secondary);
   line-height: 1.6;
-  margin: 0 0 1.5rem;
+  margin: 1rem 0 0;
 }
 
 .product-detail__specs {
@@ -190,6 +204,44 @@ const specs = computed(() => {
   display: flex;
   flex-wrap: wrap;
   gap: 0.375rem;
+  margin-top: 1rem;
+}
+
+.product-detail__content {
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 1px solid var(--color-border);
+  line-height: 1.8;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-base, 1rem);
+}
+
+.product-detail__content :deep(p) {
+  margin: 0 0 1em;
+}
+
+.product-detail__content :deep(h1),
+.product-detail__content :deep(h2),
+.product-detail__content :deep(h3) {
+  margin: 1.5em 0 0.5em;
+  font-weight: 700;
+}
+
+.product-detail__content :deep(img) {
+  max-width: 100%;
+  height: auto;
+  border-radius: var(--radius-base);
+  margin: 0.75em 0;
+}
+
+.product-detail__content :deep(ul),
+.product-detail__content :deep(ol) {
+  padding-left: 1.5em;
+  margin: 0 0 1em;
+}
+
+.product-detail__content :deep(li) {
+  margin-bottom: 0.25em;
 }
 
 .tag-badge {

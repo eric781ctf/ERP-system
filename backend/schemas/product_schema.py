@@ -1,4 +1,32 @@
+import re
+import bleach
 from marshmallow import Schema, fields, validate, validates, ValidationError, EXCLUDE
+
+_ALLOWED_TAGS = [
+    'p', 'h1', 'h2', 'h3', 'strong', 'em', 'u', 's',
+    'ul', 'ol', 'li', 'br', 'img', 'span',
+]
+_ALLOWED_ATTRS = {
+    'img': ['src', 'alt', 'width', 'height'],
+    'span': ['style'],
+}
+_SAFE_IMG_SRC = re.compile(r'^https://', re.IGNORECASE)
+_MAX_CONTENT_LEN = 500_000
+
+
+def sanitize_content(html: str) -> str:
+    """Strip unsafe tags/attrs and validate img src must be HTTPS."""
+    if not html:
+        return html
+    cleaned = bleach.clean(html, tags=_ALLOWED_TAGS, attributes=_ALLOWED_ATTRS, strip=True)
+    # Remove img tags whose src is not a safe HTTPS URL
+    def _check_img(match):
+        src_match = re.search(r'src=["\']([^"\']*)["\']', match.group(0))
+        if src_match and _SAFE_IMG_SRC.match(src_match.group(1)):
+            return match.group(0)
+        return ''
+    cleaned = re.sub(r'<img[^>]*>', _check_img, cleaned)
+    return cleaned
 
 
 class ProductImageSchema(Schema):
@@ -35,8 +63,10 @@ class ProductSummarySchema(Schema):
 
 
 class ProductDetailSchema(ProductSummarySchema):
-    description_zh = fields.Str(dump_only=True, allow_none=True)
-    description_en = fields.Str(dump_only=True, allow_none=True)
+    summary_zh = fields.Str(dump_only=True, allow_none=True)
+    summary_en = fields.Str(dump_only=True, allow_none=True)
+    content_zh = fields.Str(dump_only=True, allow_none=True)
+    content_en = fields.Str(dump_only=True, allow_none=True)
     yarn_count = fields.Str(dump_only=True, allow_none=True)
     density = fields.Str(dump_only=True, allow_none=True)
     weight_gsm = fields.Int(dump_only=True, allow_none=True)
@@ -52,8 +82,10 @@ class CreateProductSchema(Schema):
     name_zh = fields.Str(required=True)
     composition = fields.Str(required=True)
     name_en = fields.Str(load_default=None)
-    description_zh = fields.Str(load_default=None)
-    description_en = fields.Str(load_default=None)
+    summary_zh = fields.Str(load_default=None)
+    summary_en = fields.Str(load_default=None)
+    content_zh = fields.Str(load_default=None)
+    content_en = fields.Str(load_default=None)
     yarn_count = fields.Str(load_default=None)
     density = fields.Str(load_default=None)
     weight_gsm = fields.Int(load_default=None)
