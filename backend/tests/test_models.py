@@ -43,8 +43,10 @@ class TestFabricProductModel:
         session.add(p)
         session.flush()
         assert p.name_en is None
-        assert p.description_zh is None
-        assert p.description_en is None
+        assert p.summary_zh is None
+        assert p.summary_en is None
+        assert p.content_zh is None
+        assert p.content_en is None
         assert p.yarn_count is None
         assert p.density is None
         assert p.weight_gsm is None
