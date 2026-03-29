@@ -1,5 +1,5 @@
 <script setup>
-import { watch, onBeforeUnmount } from "vue";
+import { ref, watch, onBeforeUnmount } from "vue";
 import { useEditor, EditorContent } from "@tiptap/vue-3";
 import StarterKit from "@tiptap/starter-kit";
 import { TextStyle } from "@tiptap/extension-text-style";
@@ -17,6 +17,7 @@ const props = defineProps({
 });
 const emit = defineEmits(["update:modelValue"]);
 const toastStore = useToastStore();
+const fileInputRef = ref(null);
 
 // FontSize extension built on TextStyle
 const FontSize = Extension.create({
@@ -79,35 +80,37 @@ const editor = useEditor({
   onUpdate({ editor: ed }) {
     emit("update:modelValue", ed.getHTML());
   },
-  editorProps: {
-    handleDrop(view, event) {
-      const files = event.dataTransfer?.files;
-      if (files?.length) {
-        for (const file of files) {
-          if (file.type.startsWith("image/")) {
-            event.preventDefault();
-            handleImageUpload(file);
-          }
-        }
-        return true;
-      }
-      return false;
-    },
-    handlePaste(view, event) {
-      const items = event.clipboardData?.items;
-      if (items) {
-        for (const item of items) {
-          if (item.type.startsWith("image/")) {
-            event.preventDefault();
-            handleImageUpload(item.getAsFile());
-            return true;
-          }
-        }
-      }
-      return false;
-    },
-  },
 });
+
+function onDrop(event) {
+  const files = event.dataTransfer?.files;
+  if (files?.length) {
+    for (const file of files) {
+      if (file.type.startsWith("image/")) {
+        handleImageUpload(file);
+      }
+    }
+  }
+}
+
+function onPaste(event) {
+  const items = event.clipboardData?.items;
+  if (items) {
+    for (const item of items) {
+      if (item.type.startsWith("image/")) {
+        event.preventDefault();
+        handleImageUpload(item.getAsFile());
+        return;
+      }
+    }
+  }
+}
+
+function onFileSelected(event) {
+  const file = event.target.files?.[0];
+  if (file) handleImageUpload(file);
+  event.target.value = "";
+}
 
 watch(
   () => props.modelValue,
@@ -121,14 +124,7 @@ watch(
 onBeforeUnmount(() => editor.value?.destroy());
 
 function triggerImageUpload() {
-  const input = document.createElement("input");
-  input.type = "file";
-  input.accept = "image/jpeg,image/png";
-  input.onchange = (e) => {
-    const file = e.target.files?.[0];
-    if (file) handleImageUpload(file);
-  };
-  input.click();
+  fileInputRef.value?.click();
 }
 
 function setFontSize(size) {
@@ -149,7 +145,14 @@ function getCurrentFontSize() {
 </script>
 
 <template>
-  <div class="rich-editor">
+  <div class="rich-editor" @drop.prevent="onDrop" @paste.capture="onPaste">
+    <input
+      ref="fileInputRef"
+      type="file"
+      accept="image/jpeg,image/png"
+      style="display: none"
+      @change="onFileSelected"
+    />
     <div class="rich-editor__toolbar">
       <!-- Font size -->
       <select
